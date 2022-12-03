@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Networking.Transport;
+using UnityEngine.SceneManagement;
 
 public class ChessBoard : MonoBehaviour
 {
@@ -17,6 +19,13 @@ public class ChessBoard : MonoBehaviour
 
     Cell[][] m_cells;
 
+    
+    // multi logic
+    private int playerCount = -1;
+    private int currentTeam = -1;
+    private bool localGame = true;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +33,8 @@ public class ChessBoard : MonoBehaviour
         rayLength = 100;
         index = (-1, -1);
         // pre_type_chess = -1;
+
+        RegisterEvents();
     }
 
     // Update is called once per frame
@@ -159,4 +170,51 @@ public class ChessBoard : MonoBehaviour
             }
         }
     }
+
+
+
+    #region
+    private void RegisterEvents()
+    {
+        NetUtility.S_WELCOME += OnWelcomeServer;
+
+        NetUtility.C_WELCOME += OnWelcomeClient;
+        NetUtility.C_START_GAME += OnStartGameClient;
+    }
+    private void UnRegisterEvents()
+    {
+        NetUtility.S_WELCOME -= OnWelcomeServer;
+
+        NetUtility.C_WELCOME -= OnWelcomeClient;
+        NetUtility.C_START_GAME -= OnStartGameClient;
+    }
+
+
+    // Server
+    private void OnWelcomeServer(NetMessage msg, NetworkConnection cnn)
+    {
+        NetWelcome nw = msg as NetWelcome;
+        nw.AssignedTeam = ++playerCount;
+        Server.Instance.SendToClient(cnn, nw);
+
+        // if there are enough 2 connections, start the game
+        if (playerCount == 1)
+             Server.Instance.Broadcast(new NetStartGame());
+    }
+
+
+    // Client
+    private void OnWelcomeClient(NetMessage msg)
+    {
+        NetWelcome nw = msg as NetWelcome;
+        currentTeam = nw.AssignedTeam;
+
+        Debug.Log($"My assigned team is {nw.AssignedTeam}");
+    }
+    private void OnStartGameClient(NetMessage msg)
+    {
+        // We just need to go to the game scene
+        SceneManager.LoadScene(1);
+    }
+    #endregion
 }

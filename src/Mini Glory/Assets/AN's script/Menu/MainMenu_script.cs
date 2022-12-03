@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 
+
+
+
 public class MainMenu_script : MonoBehaviour
 {
     [SerializeField] private TMP_InputField addressInput;
@@ -19,24 +22,19 @@ public class MainMenu_script : MonoBehaviour
     // MAIN MENU
     public void CreateRoom()
     {
-        //SceneManager.LoadScene(1);
-
         server.Init(8008);
         client.Init("127.0.0.1", 8008);
     }
-
     public void JoinRoom()
     {
         // Only switch scene
         // Done outside
     }
-
     public void OptionButton()
     {
         // Only switch scene
         // Done outside
     }
-
     public void QuitGame()
     {
         Debug.Log("QUIT");
@@ -67,13 +65,11 @@ public class MainMenu_script : MonoBehaviour
     {
         client.Init(addressInput.text, 8008);
     }
-
     public void LocalGame()
     {
         server.Init(8008);
         client.Init("127.0.0.1", 8008);
     }
-
     public void BackButton_JoinGame()
     {
         // Only switch scene
@@ -94,4 +90,5 @@ public class MainMenu_script : MonoBehaviour
         server.Shutdown();
         client.Shutdown();
     }
+
 }
