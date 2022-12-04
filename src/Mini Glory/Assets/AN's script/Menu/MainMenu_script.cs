@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using Unity.Networking.Transport;
 
 
 
@@ -15,7 +16,20 @@ public class MainMenu_script : MonoBehaviour
     public Client client;
 
 
+    // multi logic
+    private int playerCount = -1;
+    private int currentTeam = -1;
+    private bool localGame = true;
 
+
+    //Start is called before the first frame update
+
+
+
+    public void Start()
+    {
+        RegisterEvents();
+    }
 
 
 
@@ -90,5 +104,52 @@ public class MainMenu_script : MonoBehaviour
         server.Shutdown();
         client.Shutdown();
     }
+
+
+
+    #region
+    private void RegisterEvents()
+    {
+        NetUtility.S_WELCOME += OnWelcomeServer;
+
+        NetUtility.C_WELCOME += OnWelcomeClient;
+        NetUtility.C_START_GAME += OnStartGameClient;
+    }
+    private void UnRegisterEvents()
+    {
+        NetUtility.S_WELCOME -= OnWelcomeServer;
+
+        NetUtility.C_WELCOME -= OnWelcomeClient;
+        NetUtility.C_START_GAME -= OnStartGameClient;
+    }
+
+
+    // Server
+    private void OnWelcomeServer(NetMessage msg, NetworkConnection cnn)
+    {
+        NetWelcome nw = msg as NetWelcome;
+        nw.AssignedTeam = ++playerCount;
+        Server.Instance.SendToClient(cnn, nw);
+
+        // if there are enough 2 connections, start the game
+        if (playerCount == 1)
+            Server.Instance.Broadcast(new NetStartGame());
+    }
+
+
+    // Client
+    private void OnWelcomeClient(NetMessage msg)
+    {
+        NetWelcome nw = msg as NetWelcome;
+        currentTeam = nw.AssignedTeam;
+
+        Debug.Log($"My assigned team is {nw.AssignedTeam}");
+    }
+    private void OnStartGameClient(NetMessage msg)
+    {
+        // We just need to go to the game scene
+        SceneManager.LoadScene(1);
+    }
+    #endregion
 
 }
