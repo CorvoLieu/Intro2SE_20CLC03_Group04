@@ -10,15 +10,19 @@ public class MainMenu_script : MonoBehaviour
 {
     [SerializeField] private TMP_InputField addressInput;
 
-    public Server server;
-    public Client client;
+    NetExecute net_execute;
 
 
-    // multi logic
-    private int playerCount = -1;
-    private int currentTeam = -1;
-    private bool localGame = true;
-    private bool[] playerRematch = new bool[2];
+
+    //public Server server;
+    //public Client client;
+
+
+    //// multi logic
+    //private int playerCount = -1;
+    //private int currentTeam = -1;
+    //private bool localGame = true;
+    //private bool[] playerRematch = new bool[2];
 
 
 
@@ -27,18 +31,18 @@ public class MainMenu_script : MonoBehaviour
 
 
 
-    public void Start()
-    {
-        RegisterEvents();
-    }
+    //public void Start()
+    //{
+    //    RegisterEvents();
+    //}
 
 
 
     // MAIN MENU
     public void CreateRoom()
     {
-        server.Init(8008);
-        client.Init("127.0.0.1", 8008);
+        net_execute.server.Init(8008);
+        net_execute.client.Init("127.0.0.1", 8008);
     }
     public void JoinRoom()
     {
@@ -78,12 +82,12 @@ public class MainMenu_script : MonoBehaviour
     // JOIN GAME
     public void JoinButton()
     {
-        client.Init(addressInput.text, 8008);
+        net_execute.client.Init(addressInput.text, 8008);
     }
     public void LocalGame()
     {
-        server.Init(8008);
-        client.Init("127.0.0.1", 8008);
+        net_execute.server.Init(8008);
+        net_execute.client.Init("127.0.0.1", 8008);
     }
     public void BackButton_JoinGame()
     {
@@ -102,98 +106,98 @@ public class MainMenu_script : MonoBehaviour
     // HOST GAME
     public void BackButton_HostGame()
     {
-        server.Shutdown();
-        client.Shutdown();
+        net_execute.server.Shutdown();
+        net_execute.client.Shutdown();
     }
 
 
 
-    #region
-    private void RegisterEvents()
-    {
-        NetUtility.S_WELCOME += OnWelcomeServer;
-        NetUtility.S_MAKE_MOVE += OnMakeMoveServer;
-        NetUtility.S_REMATCH += OnRematchServer;
+    //#region
+    //private void RegisterEvents()
+    //{
+    //    NetUtility.S_WELCOME += OnWelcomeServer;
+    //    NetUtility.S_MAKE_MOVE += OnMakeMoveServer;
+    //    NetUtility.S_REMATCH += OnRematchServer;
 
-        NetUtility.C_WELCOME += OnWelcomeClient;
-        NetUtility.C_START_GAME += OnStartGameClient;
-        NetUtility.C_MAKE_MOVE += OnMakeMoveClient;
-        NetUtility.C_REMATCH += OnRematchClient;
-    }
-    private void UnRegisterEvents()
-    {
-        NetUtility.S_WELCOME -= OnWelcomeServer;
-        NetUtility.S_MAKE_MOVE -= OnMakeMoveServer;
-        NetUtility.S_REMATCH -= OnRematchServer;
+    //    NetUtility.C_WELCOME += OnWelcomeClient;
+    //    NetUtility.C_START_GAME += OnStartGameClient;
+    //    NetUtility.C_MAKE_MOVE += OnMakeMoveClient;
+    //    NetUtility.C_REMATCH += OnRematchClient;
+    //}
+    //private void UnRegisterEvents()
+    //{
+    //    NetUtility.S_WELCOME -= OnWelcomeServer;
+    //    NetUtility.S_MAKE_MOVE -= OnMakeMoveServer;
+    //    NetUtility.S_REMATCH -= OnRematchServer;
 
-        NetUtility.C_WELCOME -= OnWelcomeClient;
-        NetUtility.C_START_GAME -= OnStartGameClient;
-        NetUtility.C_MAKE_MOVE -= OnMakeMoveClient;
-        NetUtility.C_REMATCH -= OnRematchClient;
-    }
-
-
+    //    NetUtility.C_WELCOME -= OnWelcomeClient;
+    //    NetUtility.C_START_GAME -= OnStartGameClient;
+    //    NetUtility.C_MAKE_MOVE -= OnMakeMoveClient;
+    //    NetUtility.C_REMATCH -= OnRematchClient;
+    //}
 
 
 
-    // Server
-    private void OnMakeMoveServer(NetMessage msg, NetworkConnection cnn)
-    {
-        NetMakeMove mm = msg as NetMakeMove;
-        // Receive, and just broadcast it back
-        Server.Instance.Broadcast(msg);
-    }
-    private void OnWelcomeServer(NetMessage msg, NetworkConnection cnn)
-    {
-        NetWelcome nw = msg as NetWelcome;
-        nw.AssignedTeam = ++playerCount;
-        Server.Instance.SendToClient(cnn, nw);
-
-        // if there are enough 2 connections, start the game
-        if (playerCount == 1)
-            Server.Instance.Broadcast(new NetStartGame());
-    }
-    private void OnRematchServer(NetMessage msg, NetworkConnection cnn)
-    {
-        Server.Instance.Broadcast(msg);
-    }
 
 
+    //// Server
+    //private void OnMakeMoveServer(NetMessage msg, NetworkConnection cnn)
+    //{
+    //    NetMakeMove mm = msg as NetMakeMove;
+    //    // Receive, and just broadcast it back
+    //    Server.Instance.Broadcast(msg);
+    //}
+    //private void OnWelcomeServer(NetMessage msg, NetworkConnection cnn)
+    //{
+    //    NetWelcome nw = msg as NetWelcome;
+    //    nw.AssignedTeam = ++playerCount;
+    //    Server.Instance.SendToClient(cnn, nw);
 
-    // Client
-    private void OnWelcomeClient(NetMessage msg)
-    {
-        NetWelcome nw = msg as NetWelcome;
-        currentTeam = nw.AssignedTeam;
+    //    // if there are enough 2 connections, start the game
+    //    if (playerCount == 1)
+    //        Server.Instance.Broadcast(new NetStartGame());
+    //}
+    //private void OnRematchServer(NetMessage msg, NetworkConnection cnn)
+    //{
+    //    Server.Instance.Broadcast(msg);
+    //}
 
-        Debug.Log($"My assigned team is {nw.AssignedTeam}");
-    }
-    private void OnStartGameClient(NetMessage msg)
-    {
-        // We just need to go to the game scene
-        SceneManager.LoadScene(1);
-    }
-    private void OnMakeMoveClient(NetMessage msg)
-    {
-        NetMakeMove mm = msg as NetMakeMove;
 
-        Debug.Log($"MM: {mm.teamId} : {mm.originalX} {mm.originalY} -> {mm.destinationX} {mm.destinationY}");
 
-        if (mm.teamId != currentTeam)
-        {
-            // MoveTo function
-        }
-    }
-    private void OnRematchClient(NetMessage msg)
-    {
-        NetRematch rm = msg as NetRematch;
+    //// Client
+    //private void OnWelcomeClient(NetMessage msg)
+    //{
+    //    NetWelcome nw = msg as NetWelcome;
+    //    currentTeam = nw.AssignedTeam;
 
-        playerRematch[rm.teamId] = rm.wantRematch == 1;
+    //    Debug.Log($"My assigned team is {nw.AssignedTeam}");
+    //}
+    //private void OnStartGameClient(NetMessage msg)
+    //{
+    //    // We just need to go to the game scene
+    //    SceneManager.LoadScene(1);
+    //}
+    //private void OnMakeMoveClient(NetMessage msg)
+    //{
+    //    NetMakeMove mm = msg as NetMakeMove;
 
-        // activate the piece of UI
+    //    Debug.Log($"MM: {mm.teamId} : {mm.originalX} {mm.originalY} -> {mm.destinationX} {mm.destinationY}");
 
-        // if both players want to rematch
-    }
-    #endregion
+    //    if (mm.teamId != currentTeam)
+    //    {
+    //        // MoveTo function
+    //    }
+    //}
+    //private void OnRematchClient(NetMessage msg)
+    //{
+    //    NetRematch rm = msg as NetRematch;
+
+    //    playerRematch[rm.teamId] = rm.wantRematch == 1;
+
+    //    // activate the piece of UI
+
+    //    // if both players want to rematch
+    //}
+    //#endregion
 
 }
