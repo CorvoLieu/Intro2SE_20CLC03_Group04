@@ -54,9 +54,9 @@ public class Bishop : ChessPiece
         }
 
         // Bottom Left  
-        for(int x = currentX - 1, y = currentY + 1; x >= 0 && y >= 0; x--, y--)
+        for(int x = currentX - 1, y = currentY - 1; x >= 0 && y >= 0; x--, y--)
         {
-            if(board[x,y] = null)
+            if(board[x,y] == null)
                 r.Add(new Vector2Int(x,y));
 
             else

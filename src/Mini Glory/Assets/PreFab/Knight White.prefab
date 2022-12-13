@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 4387106070112850711}
   - component: {fileID: 7391718324172974669}
   - component: {fileID: 2529085914560571453}
+  - component: {fileID: 6699457101285189196}
   m_Layer: 0
   m_Name: Knight White
-  m_TagString: Untagged
+  m_TagString: Knight_White
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -84,3 +85,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6699457101285189196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3504986847160102139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2603e5790189eb4fa5ca73de312b92c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  team: 0
+  currentX: 0
+  currentY: 0
+  type: 2
+  stunned: 0

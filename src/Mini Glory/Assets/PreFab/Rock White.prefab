@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 2110860385604009918}
   - component: {fileID: 8190459197171670730}
   - component: {fileID: 7629230941307933787}
+  - component: {fileID: 3238262212370613501}
   m_Layer: 0
   m_Name: Rock White
-  m_TagString: Untagged
+  m_TagString: Rook_White
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -84,3 +85,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &3238262212370613501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8023786054382115640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 068b0f13f68681f4c8d9eafb527589a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  team: 0
+  currentX: 0
+  currentY: 0
+  type: 1
+  stunned: 0

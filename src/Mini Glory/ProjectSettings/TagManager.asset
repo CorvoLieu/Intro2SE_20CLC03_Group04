@@ -3,7 +3,16 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Cell
+  - Bishop_White
+  - Bishop_Black
+  - Rook_White
+  - Rook_Black
+  - Pawn_White
+  - Pawn_Black
+  - Knight_White
+  - Knight_Black
   layers:
   - Default
   - TransparentFX
