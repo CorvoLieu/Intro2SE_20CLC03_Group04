@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 9153246047778661882}
   - component: {fileID: 9153246047778661876}
   - component: {fileID: 9153246047778661877}
+  - component: {fileID: 2138513295614479897}
   m_Layer: 5
   m_Name: Rook View
   m_TagString: Untagged
@@ -25,7 +26,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3647792157759969576}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -73,3 +74,18 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
+--- !u!114 &2138513295614479897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3647792157759969576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3c133286a54ca848b0e301b64c40335, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
+  image: {fileID: 9153246047778661877}
+  parentAfterDrag: {fileID: 0}

@@ -15,6 +15,7 @@ public class ScenarioSettingMenu : MonoBehaviour
     {
         len = (int)sliderLen.value;
         wid = (int)sliderWid.value;
+        grid.updateGrid(len, wid);
     }
 
     public void changeLen()

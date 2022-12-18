@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5152780229140729279}
   - component: {fileID: 5152780229140729277}
   - component: {fileID: 5152780229140729278}
+  - component: {fileID: 1857975959775783251}
   m_Layer: 5
   m_Name: Knight View
   m_TagString: Untagged
@@ -25,7 +26,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3647792157759969576}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -73,3 +74,18 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
+--- !u!114 &1857975959775783251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3647792157759969576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3c133286a54ca848b0e301b64c40335, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 2
+  image: {fileID: 5152780229140729278}
+  parentAfterDrag: {fileID: 0}

@@ -8,18 +8,18 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1727296051310336977}
-  - component: {fileID: 1727296051310336979}
-  - component: {fileID: 1727296051310336978}
-  - component: {fileID: 5089301289393204397}
+  - component: {fileID: 9153246047778661882}
+  - component: {fileID: 9153246047778661876}
+  - component: {fileID: 9153246047778661877}
+  - component: {fileID: 2138513295614479897}
   m_Layer: 5
-  m_Name: Pawn View
+  m_Name: Hero View
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &1727296051310336977
+--- !u!224 &9153246047778661882
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -39,7 +39,7 @@ RectTransform:
   m_AnchoredPosition: {x: 24.1, y: 0.00000047683716}
   m_SizeDelta: {x: 39.156296, y: 40.331}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &1727296051310336979
+--- !u!222 &9153246047778661876
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,7 +47,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3647792157759969576}
   m_CullTransparentMesh: 1
---- !u!114 &1727296051310336978
+--- !u!114 &9153246047778661877
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -67,14 +67,14 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: 5b50cf9f91f1b964d9186bd29d6dd9c4, type: 2}
+  m_Texture: {fileID: 8400000, guid: 86a8cfb3448760048bcb0a90cf46f29e, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
     y: 0
     width: 1
     height: 1
---- !u!114 &5089301289393204397
+--- !u!114 &2138513295614479897
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -86,6 +86,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3c133286a54ca848b0e301b64c40335, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
-  image: {fileID: 1727296051310336978}
+  type: 4
+  image: {fileID: 9153246047778661877}
   parentAfterDrag: {fileID: 0}
