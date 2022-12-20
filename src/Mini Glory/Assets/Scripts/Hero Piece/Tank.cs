@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class Tank : HeroPiece
 {
+    public override string ToString()
+    {
+        return "Tank";
+    }
     void Start()
     {
         life = 2;
-        nextUnlti = 4;
+        nextUlti = 4;
         ultiCounter = 0;
     }
 

@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Pawn : ChessPiece
 {
+    void Awake()
+    {
+        type = ChessPieceType.Pawn;
+    }
     public override List<Vector2Int> GetAvailableMoves(ref ChessPiece[,] board, int tileCountX, int tileCountY)
     {
         List<Vector2Int> r = new List<Vector2Int>();
@@ -35,5 +39,10 @@ public class Pawn : ChessPiece
             if(board[currentX - 1, currentY + direction] != null && board[currentX - 1, currentY + direction].team != team)
                 r.Add(new Vector2Int(currentX - 1, currentY + direction));
         return r;
+    }
+
+    public override string ToString()
+    {
+        return "Pawn";
     }
 } 

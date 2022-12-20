@@ -24,12 +24,19 @@ public class ChessPiece : MonoBehaviour
     public int currentX;
     public int currentY;
     public ChessPieceType type;
-    public int stunned;
+    public int stunned = 0;
 
     bool isDead = false;
     protected Vector3 desiredPosition;
     private Vector3 desiredScale = Vector3.one * 1700f;
 
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// </summary>
+    void Awake()
+    {
+        type = ChessPieceType.None;
+    }
     private void Start() 
     {
         desiredPosition = new Vector3((float)-currentX, 0.3f, (float)currentY);
@@ -73,5 +80,10 @@ public class ChessPiece : MonoBehaviour
     public bool getIsDead()
     {
         return isDead;
+    }
+
+    public override string ToString()
+    {
+        return "ChessPieces";
     }
 }
