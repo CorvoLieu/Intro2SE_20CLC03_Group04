@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5480275056911898855}
   - component: {fileID: 975962403781185138}
   - component: {fileID: 8835366751539570882}
+  - component: {fileID: -5397167141355568859}
   m_Layer: 0
   m_Name: Bishop Black
   m_TagString: Bishop_Black
@@ -62,8 +63,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 4884069201873461981, guid: 333d9e0c2d0c22bb5ad021bc40a7a257, type: 3}
-  - {fileID: -531934429052397334, guid: 333d9e0c2d0c22bb5ad021bc40a7a257, type: 3}
+  - {fileID: 2100000, guid: 3fed4e85a3c70c5cd8df71f2157829b4, type: 2}
+  - {fileID: 2100000, guid: 3fed4e85a3c70c5cd8df71f2157829b4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -102,3 +103,16 @@ MonoBehaviour:
   currentY: 0
   type: 3
   stunned: 0
+--- !u!65 &-5397167141355568859
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5194174746403264906}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.00039069678, y: 0.00039069683, z: 0.00078707223}
+  m_Center: {x: 2.9103829e-11, y: -5.09317e-11, z: 0.00039353606}

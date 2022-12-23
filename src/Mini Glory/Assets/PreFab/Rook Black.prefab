@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6394102054604177950}
   - component: {fileID: 2992975436276496464}
   - component: {fileID: 2689165450868938019}
+  - component: {fileID: -6720599862174330451}
   m_Layer: 0
   m_Name: Rook Black
   m_TagString: Rook_Black
@@ -62,8 +63,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 4884069201873461981, guid: 333d9e0c2d0c22bb5ad021bc40a7a257, type: 3}
-  - {fileID: -531934429052397334, guid: 333d9e0c2d0c22bb5ad021bc40a7a257, type: 3}
+  - {fileID: 2100000, guid: 3fed4e85a3c70c5cd8df71f2157829b4, type: 2}
+  - {fileID: 2100000, guid: 3fed4e85a3c70c5cd8df71f2157829b4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -102,3 +103,16 @@ MonoBehaviour:
   currentY: 0
   type: 1
   stunned: 0
+--- !u!65 &-6720599862174330451
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 806577803086906074}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.0003906968, y: 0.00039069683, z: 0.00062873244}
+  m_Center: {x: 4.3655742e-11, y: -5.09317e-11, z: 0.00031436616}
