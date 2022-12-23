@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class Canoneer : HeroPiece
 {
+    public override string ToString()
+    {
+        return "Canoneer";
+    }
     // Start is called before the first frame update
     void Start()
     {
         life = 1;
-        nextUnlti = 5;
+        nextUlti = 5;
         ultiCounter = 0;
     }
 

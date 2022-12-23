@@ -13,7 +13,7 @@ public class SimpleGridSlot : MonoBehaviour, IDropHandler, IPointerClickHandler
     private LayoutGrid parent;
     [HideInInspector] public bool isDisable = false;
     [HideInInspector] public ChessPieceType type;
-     public ChessPieceTeam team;
+    [HideInInspector] public ChessPieceTeam team;
 
     void Start()
     {
