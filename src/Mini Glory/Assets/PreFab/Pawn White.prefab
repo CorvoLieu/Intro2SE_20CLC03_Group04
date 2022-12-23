@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7022087534573296842}
   - component: {fileID: 7440661418571010189}
   - component: {fileID: 934692061559050458}
+  - component: {fileID: 2215368393420955193}
   m_Layer: 0
   m_Name: Pawn White
   m_TagString: Pawn_White
@@ -62,8 +63,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 4884069201873461981, guid: 333d9e0c2d0c22bb5ad021bc40a7a257, type: 3}
-  - {fileID: -2638465935176183896, guid: 333d9e0c2d0c22bb5ad021bc40a7a257, type: 3}
+  - {fileID: 2100000, guid: 041e65f833c0ec5d7992bf0ba1c86d1a, type: 2}
+  - {fileID: 2100000, guid: 041e65f833c0ec5d7992bf0ba1c86d1a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -102,3 +103,16 @@ MonoBehaviour:
   currentY: 0
   type: 0
   stunned: 0
+--- !u!65 &2215368393420955193
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 657277064339502520}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.0002979813, y: 0.00029798134, z: 0.00047946486}
+  m_Center: {x: 1.4551914e-11, y: -5.09317e-11, z: 0.00023973237}
