@@ -62,7 +62,7 @@ public class LayoutGrid : MonoBehaviour
     }
     private void newGrid(int len, int wid)
     {
-        Debug.Log("Create New Grid: " + len.ToString() + ';' + wid.ToString());
+        //Debug.Log("Create New Grid: " + len.ToString() + ';' + wid.ToString());
         grid = new GameObject[len * wid];
         this.len = len;
         this.wid = wid;

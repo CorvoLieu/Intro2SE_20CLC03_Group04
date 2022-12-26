@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class GameController : MonoBehaviour
     float m_default_posY;
     float m_default_posZ;
 
+    public Camera mainCamera;
     public GameObject Bishop_White;
     public GameObject Bishop_Black;
     public GameObject Knight_White;
@@ -16,8 +18,10 @@ public class GameController : MonoBehaviour
     public GameObject Pawn_Black;
     public GameObject Rook_White;
     public GameObject Rook_Black;
-    public int size_row;
-    public int size_col;
+    public static int size_row;
+    public static int size_col;
+    public static int type_hero_white;
+    public static int type_hero_black;
 
     ChessPiece[,] posChess;
     ChessPiece currentDragging;
@@ -44,9 +48,12 @@ public class GameController : MonoBehaviour
         whiteDefeat = new List<ChessPiece>();
         blackDefeat = new List<ChessPiece>();
         m_chessboard = FindObjectOfType<ChessBoard>();
+        // SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
+        // SceneManager.LoadScene("Customize Game Menu", LoadSceneMode.Additive);
+        mainCamera.transform.position = new Vector3(-size_row * 0.4625f, 6f, -2f);
 
-        m_chessboard.DisplayChessBoard(size_row, size_col);
-        DisplayChessDefault();
+        DisplayChessBoard();
+        // DisplayChessDefault();
     }
 
     // Update is called once per frame
@@ -134,6 +141,11 @@ public class GameController : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void DisplayChessBoard()
+    {
+        m_chessboard.DisplayChessBoard(size_row, size_col);
     }
 
     GameObject DisplayChess(GameObject chess, float cell_x, float cell_z)

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class ScenarioSettingMenu : MonoBehaviour
 {
@@ -32,6 +33,13 @@ public class ScenarioSettingMenu : MonoBehaviour
     public void getVal()
     {
         Debug.Log("len: " + len.ToString() + "; wid: " + wid.ToString());
+        // Debug.Log(SceneManager.GetSceneByName("Scenes/SampleScene").name);
+        // SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
+        GameController.size_col = len;
+        GameController.size_row = wid;
+        SceneManager.LoadScene("Choose Power");
+        // SceneManager.UnloadSceneAsync("Customize Game Menu");
+        // SceneManager.SetActiveScene(SceneManager.GetSceneByName("Scenes/SampleScene"));
     }
 
     public int getWid()
