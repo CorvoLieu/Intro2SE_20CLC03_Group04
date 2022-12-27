@@ -11,9 +11,11 @@ GameObject:
   - component: {fileID: 6141908111018596069}
   - component: {fileID: 3983322464060990249}
   - component: {fileID: 6022120486102810241}
+  - component: {fileID: 8865963747501063584}
+  - component: {fileID: 4308866758641010920}
   m_Layer: 0
   m_Name: Bishop White
-  m_TagString: Untagged
+  m_TagString: Bishop_White
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -61,8 +63,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 4884069201873461981, guid: 333d9e0c2d0c22bb5ad021bc40a7a257, type: 3}
-  - {fileID: -2638465935176183896, guid: 333d9e0c2d0c22bb5ad021bc40a7a257, type: 3}
+  - {fileID: 2100000, guid: 041e65f833c0ec5d7992bf0ba1c86d1a, type: 2}
+  - {fileID: 2100000, guid: 041e65f833c0ec5d7992bf0ba1c86d1a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84,3 +86,33 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8865963747501063584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4243961174215320320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8570edf82f92a8f41847fbee7d07c734, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  team: 0
+  currentX: 0
+  currentY: 0
+  type: 3
+  stunned: 0
+--- !u!65 &4308866758641010920
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4243961174215320320}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.00039069678, y: 0.00039069683, z: 0.00078707223}
+  m_Center: {x: 2.9103829e-11, y: -5.09317e-11, z: 0.00039353606}

@@ -6,6 +6,9 @@ public class Cell : MonoBehaviour
 {
     Material m_material;
     // Color m_defaut_color;
+    // ChessPieceType m_chp_type;
+    // ChessPieceTeam m_chp_team;
+
 
     Color m_black = new Vector4(0.2196f,0.2196f,0.2196f);
     Color m_white = new Vector4(0.8773f,0.8773f,0.8773f);
@@ -16,6 +19,8 @@ public class Cell : MonoBehaviour
     {
         // m_material = gameObject.GetComponent<MeshRenderer>().material;
         // m_material.color = m_white;
+        // m_chp_type = ChessPieceType.Empty;
+        // m_chp_team = ChessPieceTeam.Empty;
     }
 
     // Update is called once per frame
@@ -37,6 +42,65 @@ public class Cell : MonoBehaviour
         else
             m_material.color = m_green;
     }
+
+    // private void OnTriggerEnter(Collider other) {
+    //     if (other.CompareTag("Pawn_White"))
+    //     {
+    //         m_chp_type = ChessPieceType.Pawn;
+    //         m_chp_team = ChessPieceTeam.White;
+    //     }
+    //     else if (other.CompareTag("Pawn_Black"))
+    //     {
+    //         m_chp_type = ChessPieceType.Pawn;
+    //         m_chp_team = ChessPieceTeam.Black;
+    //     }
+    //     else if (other.CompareTag("Rook_White"))
+    //     {
+    //         m_chp_type = ChessPieceType.Rook;
+    //         m_chp_team = ChessPieceTeam.White;
+    //     }
+    //     else if (other.CompareTag("Rook_Black"))
+    //     {
+    //         m_chp_type = ChessPieceType.Rook;
+    //         m_chp_team = ChessPieceTeam.Black;
+    //     }
+    //     else if (other.CompareTag("Knight_White"))
+    //     {
+    //         m_chp_type = ChessPieceType.Knight;
+    //         m_chp_team = ChessPieceTeam.White;
+    //     }
+    //     else if (other.CompareTag("Kninght_Black"))
+    //     {
+    //         m_chp_type = ChessPieceType.Knight;
+    //         m_chp_team = ChessPieceTeam.Black;
+    //     }
+    //     else if (other.CompareTag("Bishop_White"))
+    //     {
+    //         m_chp_type = ChessPieceType.Bishop;
+    //         m_chp_team = ChessPieceTeam.White;
+    //     }
+    //     else if (other.CompareTag("Bishop_Black"))
+    //     {
+    //         m_chp_type = ChessPieceType.Bishop;
+    //         m_chp_team = ChessPieceTeam.Black;
+    //     }
+    // }
+
+    // private void OnTriggerExit(Collider other) {
+    //     m_chp_type = ChessPieceType.Empty;
+    //     m_chp_team = ChessPieceTeam.Empty;
+    // }
+
+    // public ChessPieceType get_chp_type()
+    // {
+    //     return m_chp_type;
+    // }
+
+    // public ChessPieceTeam get_chp_team()
+    // {
+    //     return m_chp_team;
+    // }
+
 
     // public void ResetColor()
     // {
