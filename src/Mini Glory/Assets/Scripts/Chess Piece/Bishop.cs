@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bishop : ChessPiece
 {
-    void Start()
+    void Awake()
     {
         type = ChessPieceType.Bishop;
     }

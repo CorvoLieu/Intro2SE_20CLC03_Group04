@@ -105,8 +105,8 @@ public class LayoutGrid : MonoBehaviour
             if (temp.type != ChessPieceType.None)
             {
                 var newPiece = new ChessPiece();
-                newPiece.currentX = temp.x;
-                newPiece.currentY = temp.y;
+                newPiece.currentX = wid - temp.y - 1;
+                newPiece.currentY = temp.x;
                 newPiece.type = temp.type;
                 newPiece.team = (temp.team == ChessPieceTeam.White) ? 0 : 1;
 

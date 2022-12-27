@@ -61,11 +61,7 @@ public class GameController : MonoBehaviour
         mainCamera.transform.position = new Vector3(-size_row * 0.4625f, 6f, -2f);
 
         DisplayChessBoard();
-        // DisplayChessBoardWithGrid(grid);  
-        foreach (var piece in grid)
-        {
-            Debug.Log(piece.ToString());
-        }
+        DisplayChessBoardWithGrid(grid);  
     }
 
     // Update is called once per frame
@@ -329,50 +325,48 @@ public class GameController : MonoBehaviour
         // Re-load the game
     }
 
-    public void DisplayChessBoardWithGrid(LayoutGrid grid)
+    public void DisplayChessBoardWithGrid(List<ChessPiece> grid)
     {
-        for (int i = 0; i < grid.grid.Length; i++)
+        foreach (var temp in grid)
         {
-            var temp = grid.grid[i].GetComponent<SimpleGridSlot>();
-            if (temp.type != ChessPieceType.None)
+            Debug.Log(temp.currentX.ToString());
+            Debug.Log(temp.currentY.ToString());
+            if (temp.team == 0)
             {
-                if (temp.team == ChessPieceTeam.White)
+                if (temp.type == ChessPieceType.Pawn)
                 {
-                    if (temp.type == ChessPieceType.Pawn)
-                    {
-                        DisplayChess(Pawn_White, temp.x, temp.y);
-                    }
-                    if (temp.type == ChessPieceType.Bishop)
-                    {
-                        DisplayChess(Bishop_White, temp.x, temp.y);
-                    }
-                    if (temp.type == ChessPieceType.Knight)
-                    {
-                        DisplayChess(Knight_White, temp.x, temp.y);
-                    }
-                    if (temp.type == ChessPieceType.Rook)
-                    {
-                        DisplayChess(Rook_White, temp.x, temp.y);
-                    }
+                    DisplayChess(Pawn_White, temp.currentX, temp.currentY);
                 }
-                if (temp.team == ChessPieceTeam.Black)
+                if (temp.type == ChessPieceType.Bishop)
                 {
-                    if (temp.type == ChessPieceType.Pawn)
-                    {
-                        DisplayChess(Pawn_Black, temp.x, temp.y);
-                    }
-                    if (temp.type == ChessPieceType.Bishop)
-                    {
-                        DisplayChess(Bishop_Black, temp.x, temp.y);
-                    }
-                    if (temp.type == ChessPieceType.Knight)
-                    {
-                        DisplayChess(Knight_Black, temp.x, temp.y);
-                    }
-                    if (temp.type == ChessPieceType.Rook)
-                    {
-                        DisplayChess(Rook_Black, temp.x, temp.y);
-                    }
+                    DisplayChess(Bishop_White, temp.currentX, temp.currentY);
+                }
+                if (temp.type == ChessPieceType.Knight)
+                {
+                    DisplayChess(Knight_White, temp.currentX, temp.currentY);
+                }
+                if (temp.type == ChessPieceType.Rook)
+                {
+                    DisplayChess(Rook_White, temp.currentX, temp.currentY);
+                }
+            }
+            if (temp.team == 1)
+            {
+                if (temp.type == ChessPieceType.Pawn)
+                {
+                    DisplayChess(Pawn_Black, temp.currentX, temp.currentY);
+                }
+                if (temp.type == ChessPieceType.Bishop)
+                {
+                    DisplayChess(Bishop_Black, temp.currentX, temp.currentY);
+                }
+                if (temp.type == ChessPieceType.Knight)
+                {
+                    DisplayChess(Knight_Black, temp.currentX, temp.currentY);
+                }
+                if (temp.type == ChessPieceType.Rook)
+                {
+                    DisplayChess(Rook_Black, temp.currentX, temp.currentY);
                 }
             }
         }
