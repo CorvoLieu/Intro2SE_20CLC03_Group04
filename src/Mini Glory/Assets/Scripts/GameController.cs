@@ -20,6 +20,7 @@ public class GameController : MonoBehaviour
     public GameObject Rook_Black;
     public static int size_row;
     public static int size_col;
+    public static GameObject[] grid;
     public static int type_hero_white;
     public static int type_hero_black;
 
@@ -53,7 +54,12 @@ public class GameController : MonoBehaviour
         mainCamera.transform.position = new Vector3(-size_row * 0.4625f, 6f, -2f);
 
         DisplayChessBoard();
-        // DisplayChessDefault();
+        // DisplayChessBoardWithGrid(grid);  
+        for (int i = 0; i < grid.Length; i++)
+        {
+            var temp = grid[i];
+            Debug.Log(temp.ToString());
+        }
     }
 
     // Update is called once per frame
@@ -265,5 +271,54 @@ public class GameController : MonoBehaviour
             return true;
         else
             return false;
+    }
+
+    public void DisplayChessBoardWithGrid(LayoutGrid grid)
+    {
+        for (int i = 0; i < grid.grid.Length; i++)
+        {
+            var temp = grid.grid[i].GetComponent<SimpleGridSlot>();
+            if (temp.type != ChessPieceType.None)
+            {
+                if (temp.team == ChessPieceTeam.White)
+                {
+                    if (temp.type == ChessPieceType.Pawn)
+                    {
+                        DisplayChess(Pawn_White, temp.x, temp.y);
+                    }
+                    if (temp.type == ChessPieceType.Bishop)
+                    {
+                        DisplayChess(Bishop_White, temp.x, temp.y);
+                    }
+                    if (temp.type == ChessPieceType.Knight)
+                    {
+                        DisplayChess(Knight_White, temp.x, temp.y);
+                    }
+                    if (temp.type == ChessPieceType.Rook)
+                    {
+                        DisplayChess(Rook_White, temp.x, temp.y);
+                    }
+                }
+                if (temp.team == ChessPieceTeam.Black)
+                {
+                    if (temp.type == ChessPieceType.Pawn)
+                    {
+                        DisplayChess(Pawn_Black, temp.x, temp.y);
+                    }
+                    if (temp.type == ChessPieceType.Bishop)
+                    {
+                        DisplayChess(Bishop_Black, temp.x, temp.y);
+                    }
+                    if (temp.type == ChessPieceType.Knight)
+                    {
+                        DisplayChess(Knight_Black, temp.x, temp.y);
+                    }
+                    if (temp.type == ChessPieceType.Rook)
+                    {
+                        DisplayChess(Rook_Black, temp.x, temp.y);
+                    }
+                }
+            }
+        }
     }
 }

@@ -11,6 +11,7 @@ public class ScenarioSettingMenu : MonoBehaviour
     public LayoutGrid grid;
     private int len;
     private int wid;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -37,6 +38,7 @@ public class ScenarioSettingMenu : MonoBehaviour
         // SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
         GameController.size_col = len;
         GameController.size_row = wid;
+        GameController.grid = grid.grid;
         SceneManager.LoadScene("Choose Power");
         // SceneManager.UnloadSceneAsync("Customize Game Menu");
         // SceneManager.SetActiveScene(SceneManager.GetSceneByName("Scenes/SampleScene"));

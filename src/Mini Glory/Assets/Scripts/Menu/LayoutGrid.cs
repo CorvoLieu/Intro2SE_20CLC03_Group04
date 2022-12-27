@@ -10,7 +10,7 @@ public class LayoutGrid : MonoBehaviour
     private int len;
     public GameObject slotPrefab;
     [HideInInspector] public (int, int) heroSlot;
-    private GameObject[] grid;
+    public GameObject[] grid;
     private GridLayoutGroup layout;
     private static Color32 disabledSlotColor;
 
@@ -19,6 +19,7 @@ public class LayoutGrid : MonoBehaviour
         layout = GetComponent<GridLayoutGroup>();
         disabledSlotColor = new Color32(185, 34, 39, 255);
         heroSlot = (-1, -1);
+        DontDestroyOnLoad(this.gameObject);
     }
 
     public void updateGrid(int len, int wid)
