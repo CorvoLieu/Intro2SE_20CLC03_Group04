@@ -18,54 +18,15 @@ public class DataController : MonoBehaviour
     /// </summary>
     void Start()
     {
-        SaveGame(GetSaveFile());
-        var temp = LoadGame("123456");
-        temp.rivalID = "654321";
-        SaveGame(temp);
+        // SaveGame(GetSaveFile());
+        // var temp = LoadGame("123456");
+        // temp.rivalID = "654321";
+        // SaveGame(temp);
     }
 
-    private SaveFile GetSaveFile()
-    {
-        SaveFile saveFile = new SaveFile();
+    
 
-        // Test Cases
-        saveFile.len = 5;
-        saveFile.wid = 6;
-
-        saveFile.timer = 5f;
-        saveFile.rivalID = "123456";
-
-        var newTank = new Tank();
-        newTank.team = 0;
-        newTank.currentX = 1;
-        newTank.currentY = 2;
-        saveFile.heroes.Add(newTank);
-        var newClown = new Clown();
-        newClown.team = 0;
-        newClown.currentX = 1;
-        newClown.currentY = 2;
-        saveFile.heroes.Add(newClown);
-
-        var newKnight = new Knight();
-        newKnight.team = 0;
-        newKnight.currentX = 5;
-        newKnight.currentY = 9;
-        saveFile.pieces.Add(newKnight);
-        var newRook = new Rook();
-        newRook.team = 1;
-        newRook.currentX = 7;
-        newRook.currentY = 4;
-        saveFile.pieces.Add(newRook);
-        var newPawn = new Pawn();
-        newPawn.team = 0;
-        newPawn.currentX = 1;
-        newPawn.currentY = 8;
-        saveFile.pieces.Add(newPawn);
-
-        return saveFile;
-    }
-
-    private ChessPiece GetXMLLoadPieceAttrib(XmlNode xmlPiece, ChessPiece result)
+    private static ChessPiece GetXMLLoadPieceAttrib(XmlNode xmlPiece, ChessPiece result)
     {
         result.team = int.Parse(xmlPiece.Attributes["team"].Value);
         result.currentX = int.Parse(xmlPiece.Attributes["x"].Value);
@@ -77,7 +38,7 @@ public class DataController : MonoBehaviour
         return result;
     }
 
-    private void GetXMLLoadPiece(XmlNode xmlPiece, ref SaveFile result)
+    private static void GetXMLLoadPiece(XmlNode xmlPiece, ref SaveFile result)
     {
         ChessPiece piece;
         switch (xmlPiece.InnerText)
@@ -110,7 +71,8 @@ public class DataController : MonoBehaviour
         piece = GetXMLLoadPieceAttrib(xmlPiece, piece);
         result.pieces.Add(piece);
     }
-    private void GetXMLLoadHero(XmlNode xmlHero, ref SaveFile result)
+    
+    private static void GetXMLLoadHero(XmlNode xmlHero, ref SaveFile result)
     {
         HeroPiece hero;
         switch (xmlHero.InnerText)
@@ -143,7 +105,7 @@ public class DataController : MonoBehaviour
         result.heroes.Add(hero);
     }
 
-    public SaveFile LoadGame(string rivalID)
+    public static SaveFile LoadGame(string rivalID)
     {
         SaveFile result = new SaveFile();
         if (File.Exists(Application.dataPath + "/../Data/" + rivalID + ".txt"))
@@ -179,7 +141,7 @@ public class DataController : MonoBehaviour
         return result;
     }
 
-    private void GetXMLSaveData(ChessPiece piece, ref XmlElement root, XmlDocument xmlDocument)
+    private static void GetXMLSaveData(ChessPiece piece, ref XmlElement root, XmlDocument xmlDocument)
     {
         root.InnerText = piece.ToString();
         root.SetAttribute("team", piece.team.ToString());
@@ -190,7 +152,7 @@ public class DataController : MonoBehaviour
         root.SetAttribute("isDead", piece.getIsDead().ToString());
     }
 
-    private XmlElement GetXMLSavePiece(ChessPiece piece, XmlDocument xmlDocument)
+    private static XmlElement GetXMLSavePiece(ChessPiece piece, XmlDocument xmlDocument)
     {
         XmlElement root = xmlDocument.CreateElement("Piece");
 
@@ -199,7 +161,7 @@ public class DataController : MonoBehaviour
         return root;
     }
 
-    private XmlElement GetXMLSaveHero(HeroPiece hero, XmlDocument xmlDocument)
+    private static XmlElement GetXMLSaveHero(HeroPiece hero, XmlDocument xmlDocument)
     {
         XmlElement root = xmlDocument.CreateElement("Hero");
         GetXMLSaveData(hero, ref root, xmlDocument);
@@ -212,7 +174,7 @@ public class DataController : MonoBehaviour
         return root;
     }
 
-    public void SaveGame(SaveFile saveFile)
+    public static void SaveGame(SaveFile saveFile)
     {
         XmlDocument xmlDocument = new XmlDocument();
 

@@ -38,7 +38,7 @@ public class ScenarioSettingMenu : MonoBehaviour
         // SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
         GameController.size_col = len;
         GameController.size_row = wid;
-        GameController.grid = grid.grid;
+        GameController.grid = grid.getList();
         SceneManager.LoadScene("Choose Power");
         // SceneManager.UnloadSceneAsync("Customize Game Menu");
         // SceneManager.SetActiveScene(SceneManager.GetSceneByName("Scenes/SampleScene"));
@@ -51,5 +51,9 @@ public class ScenarioSettingMenu : MonoBehaviour
     public int getLen()
     {
         return len;
+    }
+    void OnDestroy()
+    {
+        
     }
 }

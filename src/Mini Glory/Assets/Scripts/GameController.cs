@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 public class GameController : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class GameController : MonoBehaviour
     public GameObject Rook_Black;
     public static int size_row;
     public static int size_col;
-    public static GameObject[] grid;
+    public static List<ChessPiece> grid;
     public static int type_hero_white;
     public static int type_hero_black;
 
@@ -36,16 +37,22 @@ public class GameController : MonoBehaviour
     bool blockRoad;
     int turn;
 
+    float timer;
+    string rivalID;
+
     // Start is called before the first frame update
     void Start()
     {
+        timer = 0;
+        rivalID = "123456";
+
         m_default_posX = 0;
         m_default_posY = 0.3f;
         m_default_posZ = 0;
         rayLength = 100;
         blockRoad = false;
         turn = 0;
-        posChess = new ChessPiece[8,8];
+        posChess = new ChessPiece[8, 8];
         whiteDefeat = new List<ChessPiece>();
         blackDefeat = new List<ChessPiece>();
         m_chessboard = FindObjectOfType<ChessBoard>();
@@ -55,17 +62,16 @@ public class GameController : MonoBehaviour
 
         DisplayChessBoard();
         // DisplayChessBoardWithGrid(grid);  
-        for (int i = 0; i < grid.Length; i++)
+        foreach (var piece in grid)
         {
-            var temp = grid[i];
-            Debug.Log(temp.ToString());
+            Debug.Log(piece.ToString());
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-       if (!currentCamera)
+        if (!currentCamera)
         {
             currentCamera = Camera.current;
             return;
@@ -88,12 +94,12 @@ public class GameController : MonoBehaviour
                             availableMove = tmp.GetAvailableMoves(ref posChess, size_col, size_row);
                             m_chessboard.DrawRoad(availableMove);
                         }
-                        else 
+                        else
                             m_chessboard.ResetRoadColor();
                     }
                     else
                     {
-                        m_chessboard.ResetRoadColor(); 
+                        m_chessboard.ResetRoadColor();
                     }
                 }
 
@@ -169,7 +175,7 @@ public class GameController : MonoBehaviour
         posChess[(int)cell_x, (int)cell_z] = clone.GetComponent<ChessPiece>();
         posChess[(int)cell_x, (int)cell_z].currentX = (int)cell_x;
         posChess[(int)cell_x, (int)cell_z].currentY = (int)cell_z;
-        
+
         return clone;
     }
 
@@ -218,7 +224,7 @@ public class GameController : MonoBehaviour
     bool MoveTo(ChessPiece cp, int desX, int desY)
     {
         Vector2Int previousPos = new Vector2Int(cp.currentX, cp.currentY);
-        ChessPiece ocp = posChess[desX,desY];
+        ChessPiece ocp = posChess[desX, desY];
 
         if (ocp != null)
         {
@@ -226,11 +232,11 @@ public class GameController : MonoBehaviour
             {
                 int n = blackDefeat.Count;
                 blackDefeat.Add(ocp);
-                ocp.SetPosition(new Vector3(m_default_posX + 1 + (n % 2) * 0.75f, m_default_posY, m_default_posZ + 7 - (n / 2)* 0.75f));
+                ocp.SetPosition(new Vector3(m_default_posX + 1 + (n % 2) * 0.75f, m_default_posY, m_default_posZ + 7 - (n / 2) * 0.75f));
                 ocp.SetScale(Vector3.one * 1500f);
                 ocp.setIsDead(true);
             }
-            else 
+            else
             {
                 int n = whiteDefeat.Count;
                 whiteDefeat.Add(ocp);
@@ -267,10 +273,60 @@ public class GameController : MonoBehaviour
 
     bool isValidIndex(Vector2Int ind)
     {
-        if (ind.x >= 0 && ind.x < size_row && ind.y >= 0 && ind.y <size_col)
+        if (ind.x >= 0 && ind.x < size_row && ind.y >= 0 && ind.y < size_col)
             return true;
         else
             return false;
+    }
+
+    public SaveFile GetSaveFile()
+    {
+        SaveFile saveFile = new SaveFile();
+
+        saveFile.timer = timer;
+        saveFile.blackDefeat = blackDefeat;
+        saveFile.whiteDefeat = whiteDefeat;
+
+        saveFile.len = size_col;
+        saveFile.wid = size_row;
+
+        saveFile.rivalID = rivalID;
+
+        foreach (ChessPiece piece in posChess)
+        {
+            ChessPiece temp = Instantiate(piece);
+            saveFile.pieces.Add(temp);
+        }
+
+        return saveFile;
+    }
+
+    public void SaveGame()
+    {
+        DataController.SaveGame(GetSaveFile());
+    }
+
+    public void LoadGame()
+    {
+        SaveFile saveFile = DataController.LoadGame(rivalID);
+
+        timer = saveFile.timer;
+        blackDefeat = saveFile.blackDefeat;
+        whiteDefeat = saveFile.whiteDefeat;
+
+        size_col = saveFile.len;
+        size_row = saveFile.wid;
+
+        rivalID = saveFile.rivalID;
+
+        posChess = new ChessPiece[size_col, size_row];
+
+        foreach (ChessPiece piece in saveFile.pieces)
+        {
+            posChess[piece.currentX, piece.currentY] = Instantiate(piece);
+        }
+
+        // Re-load the game
     }
 
     public void DisplayChessBoardWithGrid(LayoutGrid grid)

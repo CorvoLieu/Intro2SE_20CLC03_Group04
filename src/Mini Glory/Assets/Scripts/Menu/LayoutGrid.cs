@@ -19,7 +19,6 @@ public class LayoutGrid : MonoBehaviour
         layout = GetComponent<GridLayoutGroup>();
         disabledSlotColor = new Color32(185, 34, 39, 255);
         heroSlot = (-1, -1);
-        DontDestroyOnLoad(this.gameObject);
     }
 
     public void updateGrid(int len, int wid)
@@ -94,5 +93,27 @@ public class LayoutGrid : MonoBehaviour
     {
         var opposite = grid[(len - 1 - x) * wid + (wid - 1 - y)].GetComponent<SimpleGridSlot>();
         opposite.resetItem();
+    }
+
+    public List<ChessPiece> getList()
+    {
+        List<ChessPiece> result = new List<ChessPiece>();
+
+        foreach (var piece in grid)
+        {
+            var temp = piece.GetComponent<SimpleGridSlot>();
+            if (temp.type != ChessPieceType.None)
+            {
+                var newPiece = new ChessPiece();
+                newPiece.currentX = temp.x;
+                newPiece.currentY = temp.y;
+                newPiece.type = temp.type;
+                newPiece.team = (temp.team == ChessPieceTeam.White) ? 0 : 1;
+
+                result.Add(newPiece);
+            }
+        }
+
+        return result;
     }
 }
