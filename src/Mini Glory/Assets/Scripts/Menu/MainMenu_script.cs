@@ -10,7 +10,7 @@ public class MainMenu_script : MonoBehaviour
 {
     [SerializeField] private TMP_InputField addressInput;
 
-    NetExecute net_execute;
+    public NetExecute net_execute;
 
 
 
