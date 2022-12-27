@@ -87,7 +87,7 @@ public class GameController : MonoBehaviour
                         ChessPiece tmp = version.transform.gameObject.GetComponent<ChessPiece>();
                         if (tmp.getIsDead() == false && tmp.team == turn)
                         {
-                            availableMove = tmp.GetAvailableMoves(ref posChess, size_col, size_row);
+                            availableMove = tmp.GetAvailableMoves(ref posChess, size_row, size_col);
                             m_chessboard.DrawRoad(availableMove);
                         }
                         else
@@ -100,8 +100,11 @@ public class GameController : MonoBehaviour
                 }
 
                 //Move chess
+                index = LookupChessPos(version.transform.gameObject);
                 if (Input.GetMouseButtonDown(0) && isValidIndex(index))
                 {
+                    Debug.Log("Clicked" + index.x.ToString());
+                    Debug.Log("Clicked" + index.y.ToString());
                     if (posChess[index.x, index.y] != null)
                     {
                         //Is it our turn?
@@ -113,13 +116,24 @@ public class GameController : MonoBehaviour
                     }
                 }
 
+                if (currentDragging != null)
+                {
+                    Plane horizontalPlane = new Plane(Vector3.up, Vector3.up * m_default_posY);
+                    float distance = 0.0f;
+                    if (horizontalPlane.Raycast(ray, out distance))
+                    {
+                        currentDragging.SetPosition(ray.GetPoint(distance) + Vector3.up * 1.5f);
+                    }
+                }
+
                 if (currentDragging != null && Input.GetMouseButtonUp(0))
                 {
                     Vector2Int previousPos = new Vector2Int(currentDragging.currentX, currentDragging.currentY);
-                    index = LookupChessPos(version.transform.gameObject);
+                    index = LookupCell(version.transform.gameObject);
                     bool validMove = ContainsValidMove(availableMove, new Vector2Int(index.x, index.y));
                     if (!validMove)
                     {
+                        Debug.Log("Faillllll");
                         currentDragging.SetPosition(new Vector3(-previousPos.x, m_default_posY, previousPos.y));
                         availableMove = null;
                         currentDragging = null;
@@ -128,6 +142,7 @@ public class GameController : MonoBehaviour
                     else
                     {
                         MoveTo(currentDragging, index.x, index.y);
+                        Debug.Log("Successsss");
                         if (turn == 0)
                             turn = 1;
                         else
@@ -138,15 +153,9 @@ public class GameController : MonoBehaviour
                     }
                 }
             }
-
-            if (currentDragging)
+            else
             {
-                Plane horizontalPlane = new Plane(Vector3.up, Vector3.up * m_default_posY);
-                float distance = 0.0f;
-                if (horizontalPlane.Raycast(ray, out distance))
-                {
-                    currentDragging.SetPosition(ray.GetPoint(distance) + Vector3.up * 1.5f);
-                }
+                m_chessboard.ResetRoadColor();
             }
         }
     }
@@ -213,8 +222,20 @@ public class GameController : MonoBehaviour
         //     return vector2Int((int)temp.transfor)
         // }
 
-        return new Vector2Int((int)-hitVer.transform.position.x, (int)hitVer.transform.position.z);
+        // return new Vector2Int((int)-hitVer.transform.position.x, (int)hitVer.transform.position.z);
+        ChessPiece temp = hitVer.GetComponent<ChessPiece>();
+        for (int i = 0; i < size_row; i++)
+            for(int j = 0; j < size_col; j++)
+            {
+                if (posChess[i, j] == temp)
+                    return new Vector2Int(i, j);
+            }
+        return new Vector2Int(-1, -1);
+    }
 
+    Vector2Int LookupCell(GameObject hitVer)
+    {
+        return new Vector2Int((int)-hitVer.transform.position.x, (int)hitVer.transform.position.z);
     }
 
     bool MoveTo(ChessPiece cp, int desX, int desY)
@@ -228,7 +249,7 @@ public class GameController : MonoBehaviour
             {
                 int n = blackDefeat.Count;
                 blackDefeat.Add(ocp);
-                ocp.SetPosition(new Vector3(m_default_posX + 1 + (n % 2) * 0.75f, m_default_posY, m_default_posZ + 7 - (n / 2) * 0.75f));
+                ocp.SetPosition(new Vector3(m_default_posX + 1 + (n % 2) * 0.75f, m_default_posY, m_default_posZ + (size_col - 1) - (n / 2) * 0.75f));
                 ocp.SetScale(Vector3.one * 1500f);
                 ocp.setIsDead(true);
             }
@@ -236,7 +257,7 @@ public class GameController : MonoBehaviour
             {
                 int n = whiteDefeat.Count;
                 whiteDefeat.Add(ocp);
-                ocp.SetPosition(new Vector3(m_default_posX - 8 - (n % 2) * 0.75f, m_default_posY, m_default_posZ + (n / 2) * 0.75f));
+                ocp.SetPosition(new Vector3(m_default_posX - (size_row) - (n % 2) * 0.75f, m_default_posY, m_default_posZ + (n / 2) * 0.75f));
                 ocp.SetScale(Vector3.one * 1500f);
                 ocp.setIsDead(true);
             }
@@ -329,8 +350,6 @@ public class GameController : MonoBehaviour
     {
         foreach (var temp in grid)
         {
-            Debug.Log(temp.currentX.ToString());
-            Debug.Log(temp.currentY.ToString());
             if (temp.team == 0)
             {
                 if (temp.type == ChessPieceType.Pawn)
