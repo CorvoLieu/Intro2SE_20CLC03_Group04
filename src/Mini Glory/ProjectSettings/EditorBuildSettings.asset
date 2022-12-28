@@ -11,4 +11,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Chessboard Scene.unity
     guid: 2eea47cd1fe4254499589a797e6aa87d
+  - enabled: 1
+    path: Assets/Scenes/Customize Game Menu.unity
+    guid: 3a434d7d65624df40b5ae35da45df5a9
+  - enabled: 1
+    path: Assets/Scenes/SampleScene.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/Choose Power.unity
+    guid: 57017fc154a92074b843251583d6292f
   m_configObjects: {}

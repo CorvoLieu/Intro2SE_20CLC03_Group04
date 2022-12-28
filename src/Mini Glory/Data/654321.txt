@@ -1,0 +1,15 @@
+<Save FileName="654321">
+  <Len>5</Len>
+  <Wid>6</Wid>
+  <Timer>5</Timer>
+  <rivalID>654321</rivalID>
+  <PieceList>
+    <Piece team="0" x="5" y="9" type="Pawn" stunned="0" isDead="False">Knight</Piece>
+    <Piece team="1" x="7" y="4" type="Pawn" stunned="0" isDead="False">Rook</Piece>
+    <Piece team="0" x="1" y="8" type="Pawn" stunned="0" isDead="False">Pawn</Piece>
+  </PieceList>
+  <HeroList>
+    <Hero team="0" x="1" y="2" type="Pawn" stunned="0" isDead="False" life="0" nextUlti="0" ultiCounter="-1" ulti_ed="False">Tank</Hero>
+    <Hero team="0" x="1" y="2" type="Pawn" stunned="0" isDead="False" life="0" nextUlti="0" ultiCounter="-1" ulti_ed="False">Clown</Hero>
+  </HeroList>
+</Save>

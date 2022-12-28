@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class Clown : HeroPiece
 {
+    public override string ToString()
+    {
+        return "Clown";
+    }
     // Start is called before the first frame update
     void Start()
     {
         life = 1;
-        nextUnlti = 3;
+        nextUlti = 3;
         ultiCounter = 0;
     }
 

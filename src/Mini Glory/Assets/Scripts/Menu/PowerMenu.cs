@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PowerMenu : MonoBehaviour
 {
@@ -25,5 +26,7 @@ public class PowerMenu : MonoBehaviour
     public void GetSelect()
     {
         Debug.Log("Currently selected: " + currentlySelect);
+        GameController.type_hero_white = currentlySelect;
+        SceneManager.LoadScene("SampleScene");
     }
 }

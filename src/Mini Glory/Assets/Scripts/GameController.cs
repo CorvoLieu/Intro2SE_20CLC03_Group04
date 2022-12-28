@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.IO;
 
 public class GameController : MonoBehaviour
 {
@@ -8,6 +10,7 @@ public class GameController : MonoBehaviour
     float m_default_posY;
     float m_default_posZ;
 
+    public Camera mainCamera;
     public GameObject Bishop_White;
     public GameObject Bishop_Black;
     public GameObject Knight_White;
@@ -16,8 +19,11 @@ public class GameController : MonoBehaviour
     public GameObject Pawn_Black;
     public GameObject Rook_White;
     public GameObject Rook_Black;
-    public int size_row;
-    public int size_col;
+    public static int size_row;
+    public static int size_col;
+    public static List<ChessPiece> grid;
+    public static int type_hero_white;
+    public static int type_hero_black;
 
     ChessPiece[,] posChess;
     ChessPiece currentDragging;
@@ -31,28 +37,37 @@ public class GameController : MonoBehaviour
     bool blockRoad;
     int turn;
 
+    float timer;
+    string rivalID;
+
     // Start is called before the first frame update
     void Start()
     {
+        timer = 0;
+        rivalID = "123456";
+
         m_default_posX = 0;
         m_default_posY = 0.3f;
         m_default_posZ = 0;
         rayLength = 100;
         blockRoad = false;
         turn = 0;
-        posChess = new ChessPiece[8,8];
+        posChess = new ChessPiece[8, 8];
         whiteDefeat = new List<ChessPiece>();
         blackDefeat = new List<ChessPiece>();
         m_chessboard = FindObjectOfType<ChessBoard>();
+        // SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
+        // SceneManager.LoadScene("Customize Game Menu", LoadSceneMode.Additive);
+        mainCamera.transform.position = new Vector3(-size_row * 0.4625f, 6f, -2f);
 
-        m_chessboard.DisplayChessBoard(size_row, size_col);
-        DisplayChessDefault();
+        DisplayChessBoard();
+        DisplayChessBoardWithGrid(grid);  
     }
 
     // Update is called once per frame
     void Update()
     {
-       if (!currentCamera)
+        if (!currentCamera)
         {
             currentCamera = Camera.current;
             return;
@@ -72,21 +87,24 @@ public class GameController : MonoBehaviour
                         ChessPiece tmp = version.transform.gameObject.GetComponent<ChessPiece>();
                         if (tmp.getIsDead() == false && tmp.team == turn)
                         {
-                            availableMove = tmp.GetAvailableMoves(ref posChess, size_col, size_row);
+                            availableMove = tmp.GetAvailableMoves(ref posChess, size_row, size_col);
                             m_chessboard.DrawRoad(availableMove);
                         }
-                        else 
+                        else
                             m_chessboard.ResetRoadColor();
                     }
                     else
                     {
-                        m_chessboard.ResetRoadColor(); 
+                        m_chessboard.ResetRoadColor();
                     }
                 }
 
                 //Move chess
+                index = LookupChessPos(version.transform.gameObject);
                 if (Input.GetMouseButtonDown(0) && isValidIndex(index))
                 {
+                    Debug.Log("Clicked" + index.x.ToString());
+                    Debug.Log("Clicked" + index.y.ToString());
                     if (posChess[index.x, index.y] != null)
                     {
                         //Is it our turn?
@@ -98,13 +116,24 @@ public class GameController : MonoBehaviour
                     }
                 }
 
+                if (currentDragging != null)
+                {
+                    Plane horizontalPlane = new Plane(Vector3.up, Vector3.up * m_default_posY);
+                    float distance = 0.0f;
+                    if (horizontalPlane.Raycast(ray, out distance))
+                    {
+                        currentDragging.SetPosition(ray.GetPoint(distance) + Vector3.up * 1.5f);
+                    }
+                }
+
                 if (currentDragging != null && Input.GetMouseButtonUp(0))
                 {
                     Vector2Int previousPos = new Vector2Int(currentDragging.currentX, currentDragging.currentY);
-                    index = LookupChessPos(version.transform.gameObject);
+                    index = LookupCell(version.transform.gameObject);
                     bool validMove = ContainsValidMove(availableMove, new Vector2Int(index.x, index.y));
                     if (!validMove)
                     {
+                        Debug.Log("Faillllll");
                         currentDragging.SetPosition(new Vector3(-previousPos.x, m_default_posY, previousPos.y));
                         availableMove = null;
                         currentDragging = null;
@@ -113,6 +142,7 @@ public class GameController : MonoBehaviour
                     else
                     {
                         MoveTo(currentDragging, index.x, index.y);
+                        Debug.Log("Successsss");
                         if (turn == 0)
                             turn = 1;
                         else
@@ -123,17 +153,16 @@ public class GameController : MonoBehaviour
                     }
                 }
             }
-
-            if (currentDragging)
+            else
             {
-                Plane horizontalPlane = new Plane(Vector3.up, Vector3.up * m_default_posY);
-                float distance = 0.0f;
-                if (horizontalPlane.Raycast(ray, out distance))
-                {
-                    currentDragging.SetPosition(ray.GetPoint(distance) + Vector3.up * 1.5f);
-                }
+                m_chessboard.ResetRoadColor();
             }
         }
+    }
+
+    public void DisplayChessBoard()
+    {
+        m_chessboard.DisplayChessBoard(size_row, size_col);
     }
 
     GameObject DisplayChess(GameObject chess, float cell_x, float cell_z)
@@ -151,7 +180,7 @@ public class GameController : MonoBehaviour
         posChess[(int)cell_x, (int)cell_z] = clone.GetComponent<ChessPiece>();
         posChess[(int)cell_x, (int)cell_z].currentX = (int)cell_x;
         posChess[(int)cell_x, (int)cell_z].currentY = (int)cell_z;
-        
+
         return clone;
     }
 
@@ -193,14 +222,26 @@ public class GameController : MonoBehaviour
         //     return vector2Int((int)temp.transfor)
         // }
 
-        return new Vector2Int((int)-hitVer.transform.position.x, (int)hitVer.transform.position.z);
+        // return new Vector2Int((int)-hitVer.transform.position.x, (int)hitVer.transform.position.z);
+        ChessPiece temp = hitVer.GetComponent<ChessPiece>();
+        for (int i = 0; i < size_row; i++)
+            for(int j = 0; j < size_col; j++)
+            {
+                if (posChess[i, j] == temp)
+                    return new Vector2Int(i, j);
+            }
+        return new Vector2Int(-1, -1);
+    }
 
+    Vector2Int LookupCell(GameObject hitVer)
+    {
+        return new Vector2Int((int)-hitVer.transform.position.x, (int)hitVer.transform.position.z);
     }
 
     bool MoveTo(ChessPiece cp, int desX, int desY)
     {
         Vector2Int previousPos = new Vector2Int(cp.currentX, cp.currentY);
-        ChessPiece ocp = posChess[desX,desY];
+        ChessPiece ocp = posChess[desX, desY];
 
         if (ocp != null)
         {
@@ -208,15 +249,15 @@ public class GameController : MonoBehaviour
             {
                 int n = blackDefeat.Count;
                 blackDefeat.Add(ocp);
-                ocp.SetPosition(new Vector3(m_default_posX + 1 + (n % 2) * 0.75f, m_default_posY, m_default_posZ + 7 - (n / 2)* 0.75f));
+                ocp.SetPosition(new Vector3(m_default_posX + 1 + (n % 2) * 0.75f, m_default_posY, m_default_posZ + (size_col - 1) - (n / 2) * 0.75f));
                 ocp.SetScale(Vector3.one * 1500f);
                 ocp.setIsDead(true);
             }
-            else 
+            else
             {
                 int n = whiteDefeat.Count;
                 whiteDefeat.Add(ocp);
-                ocp.SetPosition(new Vector3(m_default_posX - 8 - (n % 2) * 0.75f, m_default_posY, m_default_posZ + (n / 2) * 0.75f));
+                ocp.SetPosition(new Vector3(m_default_posX - (size_row) - (n % 2) * 0.75f, m_default_posY, m_default_posZ + (n / 2) * 0.75f));
                 ocp.SetScale(Vector3.one * 1500f);
                 ocp.setIsDead(true);
             }
@@ -249,9 +290,104 @@ public class GameController : MonoBehaviour
 
     bool isValidIndex(Vector2Int ind)
     {
-        if (ind.x >= 0 && ind.x < size_row && ind.y >= 0 && ind.y <size_col)
+        if (ind.x >= 0 && ind.x < size_row && ind.y >= 0 && ind.y < size_col)
             return true;
         else
             return false;
+    }
+
+    public SaveFile GetSaveFile()
+    {
+        SaveFile saveFile = new SaveFile();
+
+        saveFile.timer = timer;
+        saveFile.blackDefeat = blackDefeat;
+        saveFile.whiteDefeat = whiteDefeat;
+
+        saveFile.len = size_col;
+        saveFile.wid = size_row;
+
+        saveFile.rivalID = rivalID;
+
+        foreach (ChessPiece piece in posChess)
+        {
+            ChessPiece temp = Instantiate(piece);
+            saveFile.pieces.Add(temp);
+        }
+
+        return saveFile;
+    }
+
+    public void SaveGame()
+    {
+        DataController.SaveGame(GetSaveFile());
+    }
+
+    public void LoadGame()
+    {
+        SaveFile saveFile = DataController.LoadGame(rivalID);
+
+        timer = saveFile.timer;
+        blackDefeat = saveFile.blackDefeat;
+        whiteDefeat = saveFile.whiteDefeat;
+
+        size_col = saveFile.len;
+        size_row = saveFile.wid;
+
+        rivalID = saveFile.rivalID;
+
+        posChess = new ChessPiece[size_col, size_row];
+
+        foreach (ChessPiece piece in saveFile.pieces)
+        {
+            posChess[piece.currentX, piece.currentY] = Instantiate(piece);
+        }
+
+        // Re-load the game
+    }
+
+    public void DisplayChessBoardWithGrid(List<ChessPiece> grid)
+    {
+        foreach (var temp in grid)
+        {
+            if (temp.team == 0)
+            {
+                if (temp.type == ChessPieceType.Pawn)
+                {
+                    DisplayChess(Pawn_White, temp.currentX, temp.currentY);
+                }
+                if (temp.type == ChessPieceType.Bishop)
+                {
+                    DisplayChess(Bishop_White, temp.currentX, temp.currentY);
+                }
+                if (temp.type == ChessPieceType.Knight)
+                {
+                    DisplayChess(Knight_White, temp.currentX, temp.currentY);
+                }
+                if (temp.type == ChessPieceType.Rook)
+                {
+                    DisplayChess(Rook_White, temp.currentX, temp.currentY);
+                }
+            }
+            if (temp.team == 1)
+            {
+                if (temp.type == ChessPieceType.Pawn)
+                {
+                    DisplayChess(Pawn_Black, temp.currentX, temp.currentY);
+                }
+                if (temp.type == ChessPieceType.Bishop)
+                {
+                    DisplayChess(Bishop_Black, temp.currentX, temp.currentY);
+                }
+                if (temp.type == ChessPieceType.Knight)
+                {
+                    DisplayChess(Knight_Black, temp.currentX, temp.currentY);
+                }
+                if (temp.type == ChessPieceType.Rook)
+                {
+                    DisplayChess(Rook_Black, temp.currentX, temp.currentY);
+                }
+            }
+        }
     }
 }

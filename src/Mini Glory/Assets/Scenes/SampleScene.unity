@@ -197,6 +197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 640981293eacf1d46b06ed290aaff585, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCamera: {fileID: 963194227}
   Bishop_White: {fileID: 4243961174215320320, guid: e68b6f3efc8000444954fd6f5d600039, type: 3}
   Bishop_Black: {fileID: 5194174746403264906, guid: 7a4bbcb26a3390a49a1b00efddb8c403, type: 3}
   Knight_White: {fileID: 3504986847160102139, guid: 299cffedd8d8ad6498233786cf6cd464, type: 3}
@@ -205,8 +206,6 @@ MonoBehaviour:
   Pawn_Black: {fileID: 4930720737743302597, guid: 39c13dc7ee1ea5844a9f7a5ce97f4b59, type: 3}
   Rook_White: {fileID: 8023786054382115640, guid: ef9bd4356a7185c4ea03d6cd6a55acc7, type: 3}
   Rook_Black: {fileID: 806577803086906074, guid: 20efea460499a4e4f81cc721d875ed8d, type: 3}
-  size_row: 8
-  size_col: 8
 --- !u!4 &562068774
 Transform:
   m_ObjectHideFlags: 0
@@ -220,7 +219,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &705507993
 GameObject:
@@ -316,50 +315,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &720760625
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 720760627}
-  - component: {fileID: 720760626}
-  m_Layer: 0
-  m_Name: PlayingField
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &720760626
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 720760625}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eec170c659f1e06469d15af9a97825e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &720760627
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 720760625}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -385,7 +340,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &963194227
 Camera:
   m_ObjectHideFlags: 0
