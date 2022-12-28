@@ -71,6 +71,11 @@ public class ChessPiece : MonoBehaviour
             transform.localScale = desiredScale;
     }
 
+    public virtual void SetRotation(Vector3 rot)
+    {
+        transform.localRotation = Quaternion.Euler(rot.x, rot.y, rot.z);
+    }
+
     public void setIsDead(bool dead)
     {
         isDead = dead;

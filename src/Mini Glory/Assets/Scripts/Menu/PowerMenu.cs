@@ -27,6 +27,7 @@ public class PowerMenu : MonoBehaviour
     {
         Debug.Log("Currently selected: " + currentlySelect);
         GameController.type_hero_white = currentlySelect;
+        GameController.type_hero_black = currentlySelect;
         SceneManager.LoadScene("SampleScene");
     }
 }

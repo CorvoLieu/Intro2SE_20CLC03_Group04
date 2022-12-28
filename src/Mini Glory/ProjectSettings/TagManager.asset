@@ -13,6 +13,8 @@ TagManager:
   - Pawn_Black
   - Knight_White
   - Knight_Black
+  - Hero_Black
+  - Hero_White
   layers:
   - Default
   - TransparentFX

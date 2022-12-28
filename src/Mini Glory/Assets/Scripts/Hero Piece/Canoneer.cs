@@ -9,7 +9,7 @@ public class Canoneer : HeroPiece
         return "Canoneer";
     }
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         life = 1;
         nextUlti = 5;

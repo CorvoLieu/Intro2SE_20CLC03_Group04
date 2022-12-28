@@ -19,6 +19,12 @@ public class GameController : MonoBehaviour
     public GameObject Pawn_Black;
     public GameObject Rook_White;
     public GameObject Rook_Black;
+    public GameObject Hero_Black_Tank;
+    public GameObject Hero_Black_Cannon;
+    public GameObject Hero_Black_Clown;
+    public GameObject Hero_White_Tank;
+    public GameObject Hero_White_Cannon;
+    public GameObject Hero_White_Clown;
     public static int size_row;
     public static int size_col;
     public static List<ChessPiece> grid;
@@ -76,7 +82,7 @@ public class GameController : MonoBehaviour
         Ray ray = currentCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out version, rayLength))
         {
-            if (version.collider.tag == "Cell" || version.collider.tag == "Bishop_White" || version.collider.tag == "Bishop_Black" || version.collider.tag == "Knight_White" || version.collider.tag == "Knight_Black" || version.collider.tag == "Pawn_White" || version.collider.tag == "Pawn_Black" || version.collider.tag == "Rook_White" || version.collider.tag == "Rook_Black")
+            if (version.collider.tag == "Cell" || version.collider.tag == "Bishop_White" || version.collider.tag == "Bishop_Black" || version.collider.tag == "Knight_White" || version.collider.tag == "Knight_Black" || version.collider.tag == "Pawn_White" || version.collider.tag == "Pawn_Black" || version.collider.tag == "Rook_White" || version.collider.tag == "Rook_Black" || version.collider.tag == "Hero_White" || version.collider.tag == "Hero_Black")
             {
                 Vector2Int index = LookupChessPos(version.transform.gameObject);
 
@@ -85,9 +91,15 @@ public class GameController : MonoBehaviour
                     if (version.collider.tag != "Cell")
                     {
                         ChessPiece tmp = version.transform.gameObject.GetComponent<ChessPiece>();
+                        Debug.Log(tmp.getIsDead().ToString());
                         if (tmp.getIsDead() == false && tmp.team == turn)
                         {
                             availableMove = tmp.GetAvailableMoves(ref posChess, size_row, size_col);
+                            Debug.Log(availableMove.Count.ToString());
+                            foreach (var item in availableMove)
+                            {
+                                Debug.Log("AvailableMove" + item.x.ToString() + "-" + item.y.ToString());
+                            }
                             m_chessboard.DrawRoad(availableMove);
                         }
                         else
@@ -100,15 +112,14 @@ public class GameController : MonoBehaviour
                 }
 
                 //Move chess
-                index = LookupChessPos(version.transform.gameObject);
                 if (Input.GetMouseButtonDown(0) && isValidIndex(index))
                 {
-                    Debug.Log("Clicked" + index.x.ToString());
-                    Debug.Log("Clicked" + index.y.ToString());
+                    // Debug.Log("Clicked" + index.x.ToString());
+                    // Debug.Log("Clicked" + index.y.ToString());
                     if (posChess[index.x, index.y] != null)
                     {
                         //Is it our turn?
-                        if (true)
+                        if (posChess[index.x, index.y].team == turn)
                         {
                             currentDragging = posChess[index.x, index.y];
                             blockRoad = true;
@@ -368,6 +379,25 @@ public class GameController : MonoBehaviour
                 {
                     DisplayChess(Rook_White, temp.currentX, temp.currentY);
                 }
+                if (temp.type == ChessPieceType.Hero)
+                {
+                    ChessPiece clone = new ChessPiece();
+                    if (type_hero_white == 1)
+                    {
+                        clone = DisplayChess(Hero_White_Tank, temp.currentX, temp.currentY).GetComponent<ChessPiece>();
+                    }
+                    else if (type_hero_white == 2)
+                    {
+                        clone = DisplayChess(Hero_White_Cannon, temp.currentX, temp.currentY).GetComponent<ChessPiece>();
+                    }
+                    else if (type_hero_white == 3)
+                    {
+                        clone = DisplayChess(Hero_White_Clown, temp.currentX, temp.currentY).GetComponent<ChessPiece>();
+                    }
+                    clone.SetScale(new Vector3(0.8f, 0.8f, 0.8f) , true);
+                    clone.SetRotation(Vector3.zero);
+                }
+                
             }
             if (temp.team == 1)
             {
@@ -386,6 +416,24 @@ public class GameController : MonoBehaviour
                 if (temp.type == ChessPieceType.Rook)
                 {
                     DisplayChess(Rook_Black, temp.currentX, temp.currentY);
+                }
+                if (temp.type == ChessPieceType.Hero)
+                {
+                    ChessPiece clone = new ChessPiece();
+                    if (type_hero_black == 1)
+                    {
+                        clone = DisplayChess(Hero_Black_Tank, temp.currentX, temp.currentY).GetComponent<ChessPiece>();
+                    }
+                    else if (type_hero_black == 2)
+                    {
+                        clone = DisplayChess(Hero_Black_Cannon, temp.currentX, temp.currentY).GetComponent<ChessPiece>();
+                    }
+                    else if (type_hero_black == 3)
+                    {
+                        clone = DisplayChess(Hero_Black_Clown, temp.currentX, temp.currentY).GetComponent<ChessPiece>();
+                    }
+                    clone.SetScale(new Vector3(0.8f, 0.8f, 0.8f), true);
+                    clone.SetRotation(new Vector3(0f, 180f, 0f));
                 }
             }
         }

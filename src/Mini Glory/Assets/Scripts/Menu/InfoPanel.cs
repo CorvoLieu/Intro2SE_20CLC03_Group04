@@ -27,6 +27,7 @@ public class InfoPanel : MonoBehaviour
             Debug.Log("Unable to get Text Mesh");
         else   
             Debug.Log(output.GetType());
+        
     }
 
     private void changeText()

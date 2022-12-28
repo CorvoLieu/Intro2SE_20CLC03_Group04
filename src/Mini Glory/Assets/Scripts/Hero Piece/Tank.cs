@@ -8,7 +8,7 @@ public class Tank : HeroPiece
     {
         return "Tank";
     }
-    void Start()
+    void Awake()
     {
         life = 2;
         nextUlti = 4;

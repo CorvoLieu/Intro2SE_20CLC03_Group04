@@ -9,7 +9,7 @@ public class Clown : HeroPiece
         return "Clown";
     }
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         life = 1;
         nextUlti = 3;

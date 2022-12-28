@@ -3,7 +3,18 @@ guid: 640981293eacf1d46b06ed290aaff585
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - mainCamera: {instanceID: 0}
+  - Bishop_White: {instanceID: 0}
+  - Bishop_Black: {instanceID: 0}
+  - Knight_White: {instanceID: 0}
+  - Knight_Black: {instanceID: 0}
+  - Pawn_White: {instanceID: 0}
+  - Pawn_Black: {instanceID: 0}
+  - Rook_White: {instanceID: 0}
+  - Rook_Black: {instanceID: 0}
+  - Hero_White: {instanceID: 0}
+  - Hero_Black: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -104,7 +104,7 @@ public class LayoutGrid : MonoBehaviour
             var temp = piece.GetComponent<SimpleGridSlot>();
             if (temp.type != ChessPieceType.None)
             {
-                var newPiece = new ChessPiece();
+                ChessPiece newPiece = new ChessPiece();
                 newPiece.currentX = wid - temp.y - 1;
                 newPiece.currentY = temp.x;
                 newPiece.type = temp.type;
