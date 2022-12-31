@@ -116,13 +116,13 @@ public class Canoneer : HeroPiece
         //Down
         for (int i = currentY - 1; i >= 0 && i >= currentY - 2; i--)
         {
-            if(board[i, currentY] == null)
-                r.Add(new Vector2Int(i, currentY));
+            if(board[currentX, i] == null)
+                r.Add(new Vector2Int(currentX, i));
             
-            if(board[i, currentY] != null)
+            if(board[currentX, i] != null)
             {
-                if(board[i, currentY].team != team)
-                    r.Add(new Vector2Int(i, currentY));
+                if(board[currentX, i].team != team)
+                    r.Add(new Vector2Int(currentX, i));
 
                 break;
             }
@@ -206,7 +206,7 @@ public class Canoneer : HeroPiece
         //Bottom Left  
         for(int x = currentX - 1, y = currentY - 1; x >= 0 && y >= 0 && x >= currentX - 2 && y >= currentY - 2; x--, y--)
         {
-            if(board[x,y] = null)
+            if(board[x,y] == null)
                 r.Add(new Vector2Int(x,y));
 
             else
