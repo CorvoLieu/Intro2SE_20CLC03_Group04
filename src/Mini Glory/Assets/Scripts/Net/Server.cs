@@ -62,13 +62,17 @@ public class Server : MonoBehaviour
     }
     public void OnDestroy()
     {
+        Debug.Log("[SERVER] OnDestroy called");
         Shutdown();
     }
 
-    public void Update()
+    public void FixedUpdate()
     {
         if (!isActive)
+        {
+            Debug.Log("[SERVER] is not actived");
             return;
+        }
 
         KeepAlive();
 
@@ -80,6 +84,7 @@ public class Server : MonoBehaviour
     }
     private void KeepAlive()
     {
+        // Debug.Log("[SERVER] Keep client alive");
         if (Time.time - lastKeepAlive > keepAliveTickRate)
         {
             lastKeepAlive = Time.time;
@@ -90,6 +95,7 @@ public class Server : MonoBehaviour
     {
         for (int i = 0; i < connections.Length; i++)
         {
+            // Debug.Log("[SERVER] Clean up connection called");
             if (!connections[i].IsCreated)
             {
                 connections.RemoveAtSwapBack(i);
@@ -102,17 +108,20 @@ public class Server : MonoBehaviour
         NetworkConnection c;
         while ((c = driver.Accept()) != default(NetworkConnection))
         {
+            // Debug.Log("[SERVER] Accept new connection");
             connections.Add(c);
         }
     }
     private void UpdateMessagePump()
     {
+        // Debug.Log("[SERVER] Update server pump called");
         DataStreamReader stream;
         for (int i = 0; i < connections.Length; i++)
         {
             NetworkEvent.Type cmd;
             while ((cmd = driver.PopEventForConnection(connections[i], out stream)) != NetworkEvent.Type.Empty)
             {
+                // Debug.Log("[SERVER] Detect new msg");
                 if (cmd == NetworkEvent.Type.Data)
                 {
                     NetUtility.OnData(stream, connections[i], this);
@@ -139,7 +148,7 @@ public class Server : MonoBehaviour
         for (int i = 0; i < connections.Length; i++)
             if (connections[i].IsCreated)
             {
-                // Debug.Log($"Sending {msg.Code} to : {connections[i].InternalId}");
+                Debug.Log($"[SERVER] Sending {msg.Code} to : {connections[i].InternalId}");
                 SendToClient(connections[i], msg);
             }
     }

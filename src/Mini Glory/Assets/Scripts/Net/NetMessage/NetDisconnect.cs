@@ -17,16 +17,16 @@ internal class NetDisconnect : NetMessage
         writer.WriteByte((byte)Code);
     }
     public override void Deserialize(DataStreamReader reader)
-    { 
-        
+    {
+
     }
 
     public override void ReceivedOnClient()
     {
-        NetUtility.C_DISCONNECT?.Invoke(this);
+        // NetUtility.C_DISCONNECT?.Invoke(this);
     }
     public override void ReceivedOnServer(NetworkConnection cnn)
     {
-        NetUtility.S_DISCONNECT?.Invoke(this, cnn);
+        // NetUtility.S_DISCONNECT?.Invoke(this, cnn);
     }
 }
