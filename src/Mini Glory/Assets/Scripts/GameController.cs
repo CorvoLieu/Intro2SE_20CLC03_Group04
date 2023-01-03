@@ -16,6 +16,7 @@ public class GameController : MonoBehaviour
     public TextMeshProUGUI m_turnRelife;
     public Button m_ultiButton;
     public Camera mainCamera;
+    public Camera clientCamera;
     public GameObject Bishop_White;
     public GameObject Bishop_Black;
     public GameObject Knight_White;
@@ -79,6 +80,7 @@ public class GameController : MonoBehaviour
         // SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
         // SceneManager.LoadScene("Customize Game Menu", LoadSceneMode.Additive);
         mainCamera.transform.position = new Vector3(-size_row * 0.4625f, 6f, -2f);
+        clientCamera.transform.position = new Vector3(-size_row * 0.4625f, 6f, 6f);
 
         DisplayChessBoard();
         DisplayChessBoardWithGrid(grid);  
