@@ -18,11 +18,20 @@ public class Clown : HeroPiece
 
     public override void ulti(ref ChessPiece[,] board, int tileCountX, int tileCountY)
     {
-        for (int x = currentX - 1, y = currentY - 1; x <= currentX + 1 && y <= currentY + 1; x++, y++)
+        for (int x = currentX - 1; x <= currentX + 1; x++)
         {
-            if(x >= 0 && x < tileCountX && y >= 0 && y < tileCountY)
+            for (int y = currentY - 1; y <= currentY + 1; y++)
             {
-                board[x, y].stunned = 2;
+                if(x >= 0 && x < tileCountX && y >= 0 && y < tileCountY && (x != currentX || y != currentY))
+                {
+                    if (board[x, y] != null)
+                    {
+                        if (board[x, y].team != team)
+                        {
+                            board[x, y].stunned = 2;
+                        }
+                    }
+                }
             }
         }
     }

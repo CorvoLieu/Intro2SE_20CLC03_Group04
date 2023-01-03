@@ -89,9 +89,46 @@ public class Canoneer : HeroPiece
 
     public override void ulti(ref ChessPiece[,] board, int tileCountX, int tileCountY)
     {
-        List<Vector2Int> jumpable = GetJumpableMoves(ref board, tileCountX, tileCountY);
+        GameController gamectrl = FindObjectOfType<GameController>();
+        for (int y = currentY - 1, x = currentX; y <= currentY + 1; y++)
+        {
+            if(y >= 0 && y < tileCountY && (x != currentX || y != currentY))
+            {
+                if (board[x, y] != null)
+                {
+                    if (board[x, y].team != team)
+                    {
+                        if (board[x, y].team == 1)
+                        {
+                            gamectrl.Black_Defeat(board[x, y], x, y);
+                        }   else
+                        {
+                            gamectrl.White_Defeat(board[x, y], x, y);
+                        }
+                    }
+                }
+            }
+        }
 
-        //TODO: add killing in + sign
+        for (int x = currentX - 1, y = currentY; x <= currentX + 1; x++)
+        {
+            if(x >= 0 && x < tileCountX && (x != currentX || y != currentY))
+            {
+                if (board[x, y] != null)
+                {
+                    if (board[x, y].team != team)
+                    {
+                        if (board[x, y].team == 1)
+                        {
+                            gamectrl.Black_Defeat(board[x, y], x, y);
+                        }   else
+                        {
+                            gamectrl.White_Defeat(board[x, y], x, y);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public override List<Vector2Int> GetAvailableMoves(ref ChessPiece[,] board, int tileCountX, int tileCountY)

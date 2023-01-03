@@ -25,6 +25,7 @@ public class ChessPiece : MonoBehaviour
     public int currentY;
     public ChessPieceType type;
     public int stunned = 0;
+    public int life = 0;
 
     bool isDead = false;
     protected Vector3 desiredPosition;
@@ -89,5 +90,10 @@ public class ChessPiece : MonoBehaviour
     public override string ToString()
     {
         return "ChessPieces";
+    }
+
+    public virtual void ulti(ref ChessPiece[,] board, int tileCountX, int tileCountY)
+    {
+
     }
 }
