@@ -51,6 +51,7 @@ public class Client : MonoBehaviour
     }
     public void OnDestroy()
     {
+        Debug.Log("[CLIENT] OnDestroy called");
         Shutdown();
     }
 
@@ -108,6 +109,7 @@ public class Client : MonoBehaviour
         driver.BeginSend(connection, out writer);
         msg.Serialize(ref writer);
         driver.EndSend(writer);
+        Debug.Log("[CLIENT] Finish write");
     }
 
     // event parsing

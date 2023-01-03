@@ -207,9 +207,9 @@ MonoBehaviour:
   Rook_White: {fileID: 8023786054382115640, guid: ef9bd4356a7185c4ea03d6cd6a55acc7, type: 3}
   Rook_Black: {fileID: 806577803086906074, guid: 20efea460499a4e4f81cc721d875ed8d, type: 3}
   Hero_Black_Tank: {fileID: 7647134206250791342, guid: 1242dddf49c41f347971eefab1f071f6, type: 3}
-  Hero_Black_Cannon: {fileID: 7647134206250791342, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
+  Hero_Black_Cannon: {fileID: 7647134206250791342, guid: e7dd78fe265e8314ea50992a051366cd, type: 3}
   Hero_Black_Clown: {fileID: 7647134206250791342, guid: 382f6a67309460d4dbb6b2123e57cb63, type: 3}
-  Hero_White_Tank: {fileID: 8189980434977739222, guid: 2dfbb63c9cdf7504faf4ff26b0581598, type: 3}
+  Hero_White_Tank: {fileID: 8189980434977739222, guid: 4e05cc080bfca32439819ed077d4c10a, type: 3}
   Hero_White_Cannon: {fileID: 8189980434977739222, guid: 9be85ad35be75694985b6f61da7f0989, type: 3}
   Hero_White_Clown: {fileID: 8189980434977739222, guid: 50e9eacc9c4dfe54ab3a787843c3edd5, type: 3}
 --- !u!4 &562068774

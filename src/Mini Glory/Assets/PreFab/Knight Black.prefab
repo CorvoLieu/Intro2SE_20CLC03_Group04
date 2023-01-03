@@ -101,7 +101,7 @@ MonoBehaviour:
   team: 1
   currentX: 0
   currentY: 0
-  type: 2
+  type: 3
   stunned: 0
 --- !u!65 &6111282037426252318
 BoxCollider:

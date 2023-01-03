@@ -4,12 +4,12 @@ using UnityEngine;
 
 public enum ChessPieceType
 {
-    None = -1,
-    Pawn = 0,
-    Rook = 1,
-    Knight = 2,
-    Bishop = 3,
-    Hero = 4,
+    None = 0,
+    Pawn = 1,
+    Rook = 2,
+    Knight = 3,
+    Bishop = 4,
+    Hero = 5,
 }
 
 public enum ChessPieceTeam

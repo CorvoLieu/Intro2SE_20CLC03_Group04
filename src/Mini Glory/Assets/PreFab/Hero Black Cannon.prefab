@@ -2337,7 +2337,7 @@ MonoBehaviour:
   team: 1
   currentX: 0
   currentY: 0
-  type: 4
+  type: 5
   stunned: 0
   life: 1
   nextUlti: 0

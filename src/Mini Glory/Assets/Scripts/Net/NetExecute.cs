@@ -34,14 +34,18 @@ public class NetExecute : MonoBehaviour
         NetUtility.S_MAKE_MOVE += OnMakeMoveServer;
         NetUtility.S_REMATCH += OnRematchServer;
         NetUtility.S_ID += OnIDServer;
-        NetUtility.S_DISCONNECT += OnDisconnectServer;
+        // NetUtility.S_DISCONNECT += OnDisconnectServer;
+        NetUtility.S_NEW_BOARD += OnNewBoardServer;
 
         NetUtility.C_WELCOME += OnWelcomeClient;
         NetUtility.C_START_GAME += OnStartGameClient;
         NetUtility.C_MAKE_MOVE += OnMakeMoveClient;
         NetUtility.C_REMATCH += OnRematchClient;
-        NetUtility.C_DISCONNECT += OnDisconnectClient;
+        // NetUtility.C_DISCONNECT += OnDisconnectClient;
+        NetUtility.C_NEW_BOARD += OnNewBoardClient;
     }
+
+
 
     private void UnRegisterEvents()
     {
@@ -49,13 +53,15 @@ public class NetExecute : MonoBehaviour
         NetUtility.S_MAKE_MOVE -= OnMakeMoveServer;
         NetUtility.S_REMATCH -= OnRematchServer;
         NetUtility.S_ID -= OnIDServer;
-        NetUtility.S_DISCONNECT -= OnDisconnectServer;
+        // NetUtility.S_DISCONNECT -= OnDisconnectServer;
+        NetUtility.S_NEW_BOARD -= OnNewBoardServer;
 
         NetUtility.C_WELCOME -= OnWelcomeClient;
         NetUtility.C_START_GAME -= OnStartGameClient;
         NetUtility.C_MAKE_MOVE -= OnMakeMoveClient;
         NetUtility.C_REMATCH -= OnRematchClient;
-        NetUtility.C_DISCONNECT -= OnDisconnectClient;
+        // NetUtility.C_DISCONNECT -= OnDisconnectClient;
+        NetUtility.C_NEW_BOARD -= OnNewBoardClient;
     }
 
 
@@ -92,7 +98,6 @@ public class NetExecute : MonoBehaviour
         playerID[playerCount] = ni.PlayerID;
         Debug.Log($"[SERVER] Player ID {playerID[playerCount]} saved as player {playerCount}");
     }
-
     private void OnDisconnectServer(NetMessage msg, NetworkConnection cnn)
     {
         Debug.Log("[SERVER] Shutting down server");
@@ -100,6 +105,12 @@ public class NetExecute : MonoBehaviour
         Server.Instance.Shutdown();
     }
 
+    private void OnNewBoardServer(NetMessage msg, NetworkConnection cnn)
+    {
+        Debug.Log("[SERVER] Broadcasting new board command");
+        var nn = msg as NetNewBoard;
+        Server.Instance.Broadcast(nn);
+    }
 
 
     // Client
@@ -113,8 +124,8 @@ public class NetExecute : MonoBehaviour
     private void OnStartGameClient(NetMessage msg)
     {
         // We just need to go to the game scene
-        SceneManager.LoadScene(1);
-        gameObject.SetActive(false);
+        // gameObject.SetActive(false);
+        GameController.EnterGame(currentTeam);
     }
     private void OnMakeMoveClient(NetMessage msg)
     {
@@ -142,6 +153,36 @@ public class NetExecute : MonoBehaviour
         Debug.Log("[CLIENT] Shutting down client");
         Client.Instance.Shutdown();
         SceneManager.LoadScene(5);
+    }
+    private void OnNewBoardClient(NetMessage msg)
+    {
+        Debug.Log("[CLIENT] Receive New Board command");
+
+        var nb = msg as NetNewBoard;
+        GameController.size_row = nb.wid;
+        GameController.size_col = nb.len;
+        GameController.type_hero_black = nb.hero1Ability;
+        GameController.type_hero_white = nb.hero2Ability;
+        GameController.grid = new List<ChessPiece>();
+        for (int i = 0; i < nb.wid; i++)
+        {
+            for (int j = 0; j < nb.len; j++)
+            {
+                if (nb.board[i, j] != ChessPieceType.None)
+                {
+                    ChessPiece tempPiece = new ChessPiece();
+                    tempPiece.currentX = i;
+                    tempPiece.currentY = j;
+                    tempPiece.type = nb.board[i, j];
+                    tempPiece.team = (j > nb.len / 2) ? 1 : 0;
+
+                    Debug.Log($"Adding {tempPiece} at {i} : {j}");
+                    GameController.grid.Add(tempPiece);
+                }
+            }
+        }
+
+        SceneManager.LoadScene(3);
     }
     #endregion
 }

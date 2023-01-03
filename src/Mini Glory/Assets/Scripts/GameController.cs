@@ -439,4 +439,15 @@ public class GameController : MonoBehaviour
             }
         }
     }
+    public static void EnterGame(int team)
+    {
+        if(team == 0)
+        {
+            SceneManager.LoadScene(2);
+            return;
+        }
+
+        SceneManager.LoadScene(6);
+    }
 }
+
