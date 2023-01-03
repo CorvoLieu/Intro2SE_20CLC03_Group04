@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Wait.unity
     guid: c0470bf26cdfc2b409234e0e219a4df0
+  - enabled: 1
+    path: Assets/Scenes/WinGame.unity
+    guid: 4d6776a6feb19d84cbd278a8cdea37cb
   m_configObjects: {}
