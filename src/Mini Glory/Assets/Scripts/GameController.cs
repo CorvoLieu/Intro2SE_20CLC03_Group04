@@ -89,6 +89,17 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (CheckWinGame() == 0)
+        {
+            //Process screen white win and black lose
+            SceneManager.LoadScene("WinGame");
+        }
+        if (CheckWinGame() == 1)
+        {
+            //Process screen white lose and black win
+            SceneManager.LoadScene("WinGame");
+        }
+        
         m_mana.text = "Mana: " + m_ultiCounterWhite.ToString();
         m_turnRelife.text = "Turn Relife: " + turn_relifeWhite.ToString();
         if (m_ultiCounterWhite >= 3)
@@ -660,6 +671,30 @@ public class GameController : MonoBehaviour
         }
 
         SceneManager.LoadScene(6);
+    }
+
+    //No win return -1, white win return 0, black win return 1
+    int CheckWinGame()
+    {
+        int countWhite = 0;
+        int countBlack = 0;
+        for (int i = 0; i < size_row; i++)
+            for (int j = 0; j < size_col; j++)
+            {
+                if (posChess[i, j] != null)
+                {
+                    if (posChess[i, j].team == 0)
+                        countWhite++;
+                    else
+                        countBlack++;
+                }
+            }
+
+        if (countWhite <= 2)
+            return 1;
+        if (countBlack <= 2)
+            return 0;
+        return -1;
     }
 }
 
