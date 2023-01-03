@@ -54,6 +54,7 @@ public class Server : MonoBehaviour
     {
         if (isActive)
         {
+            Debug.Log("[SERVER] Shutting down Server");
             driver.Dispose();
             connections.Dispose();
             isActive = false;
@@ -107,7 +108,7 @@ public class Server : MonoBehaviour
     private void UpdateMessagePump()
     {
         DataStreamReader stream;
-        for(int i = 0; i < connections.Length; i++)
+        for (int i = 0; i < connections.Length; i++)
         {
             NetworkEvent.Type cmd;
             while ((cmd = driver.PopEventForConnection(connections[i], out stream)) != NetworkEvent.Type.Empty)
@@ -118,10 +119,7 @@ public class Server : MonoBehaviour
                 }
                 else if (cmd == NetworkEvent.Type.Disconnect)
                 {
-                    Debug.Log("Client desconnected from server");
-                    connections[i] = default(NetworkConnection);
-                    connectionDropped?.Invoke();
-                    Shutdown();   // because we're in a two person game
+                    OnDisconnect();
                 }
             }
         }
@@ -130,6 +128,7 @@ public class Server : MonoBehaviour
     // server specific
     public void SendToClient(NetworkConnection connection, NetMessage msg)
     {
+        Debug.Log($"[SERVER] Sending {msg} to CLIENT");
         DataStreamWriter writer;
         driver.BeginSend(connection, out writer);
         msg.Serialize(ref writer);
@@ -144,5 +143,12 @@ public class Server : MonoBehaviour
                 SendToClient(connections[i], msg);
             }
     }
-
+    public void OnDisconnect()
+    {
+        Debug.Log("Client desconnected from server");
+        connections[0] = default(NetworkConnection);
+        connections[1] = default(NetworkConnection);
+        connectionDropped?.Invoke();
+        Shutdown();   // because we're in a two person game
+    }
 }

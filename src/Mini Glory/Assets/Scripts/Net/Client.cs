@@ -1,5 +1,6 @@
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Unity.Networking.Transport;
 using System;
 
@@ -41,6 +42,7 @@ public class Client : MonoBehaviour
     {
         if (isActive)
         {
+            Debug.Log("[CLIENT] Shutting down Client");
             UnregisterToEvent();
             driver.Dispose();
             isActive = false;
@@ -75,14 +77,19 @@ public class Client : MonoBehaviour
     private void UpdateMessagePump()
     {
         DataStreamReader stream;
-        
+
         NetworkEvent.Type cmd;
         while ((cmd = connection.PopEvent(driver, out stream)) != NetworkEvent.Type.Empty)
         {
             if (cmd == NetworkEvent.Type.Connect)
             {
                 SendToServer(new NetWelcome());
-                Debug.Log("We're connected");
+                Debug.Log("[CLIENT] We're connected");
+
+                NetID ni = new NetID();
+                ni.PlayerID = 10;
+                SendToServer(ni);
+                Debug.Log("[CLIENT] Sent ID to server");
             }
             else if (cmd == NetworkEvent.Type.Data)
             {
@@ -90,16 +97,13 @@ public class Client : MonoBehaviour
             }
             else if (cmd == NetworkEvent.Type.Disconnect)
             {
-                Debug.Log("Client got disconnected from server");
-                connection = default(NetworkConnection);
-                connectionDropped?.Invoke();
-                Shutdown();
+                OnDisconnect();
             }
         }
     }
-
     public void SendToServer(NetMessage msg)
     {
+        Debug.Log($"[CLIENT] Sending {msg} to SERVER");
         DataStreamWriter writer;
         driver.BeginSend(connection, out writer);
         msg.Serialize(ref writer);
@@ -119,5 +123,11 @@ public class Client : MonoBehaviour
     {
         SendToServer(nm);
     }
-
+    public void OnDisconnect()
+    {
+        Debug.Log("Client got disconnected from server");
+        connection = default(NetworkConnection);
+        connectionDropped?.Invoke();
+        Shutdown();
+    }
 }

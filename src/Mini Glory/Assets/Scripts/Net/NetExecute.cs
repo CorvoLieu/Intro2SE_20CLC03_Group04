@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Networking.Transport;
 using UnityEngine.SceneManagement;
-
+using System;
 
 public class NetExecute : MonoBehaviour
 {
@@ -16,11 +16,13 @@ public class NetExecute : MonoBehaviour
     private int currentTeam = -1;
     private bool localGame = true;
     private bool[] playerRematch = new bool[2];
+    [HideInInspector] public int[] playerID = new int[2];
 
 
 
     void Start()
     {
+        DontDestroyOnLoad(this.gameObject);
         RegisterEvents();
     }
 
@@ -31,22 +33,29 @@ public class NetExecute : MonoBehaviour
         NetUtility.S_WELCOME += OnWelcomeServer;
         NetUtility.S_MAKE_MOVE += OnMakeMoveServer;
         NetUtility.S_REMATCH += OnRematchServer;
+        NetUtility.S_ID += OnIDServer;
+        NetUtility.S_DISCONNECT += OnDisconnectServer;
 
         NetUtility.C_WELCOME += OnWelcomeClient;
         NetUtility.C_START_GAME += OnStartGameClient;
         NetUtility.C_MAKE_MOVE += OnMakeMoveClient;
         NetUtility.C_REMATCH += OnRematchClient;
+        NetUtility.C_DISCONNECT += OnDisconnectClient;
     }
+
     private void UnRegisterEvents()
     {
         NetUtility.S_WELCOME -= OnWelcomeServer;
         NetUtility.S_MAKE_MOVE -= OnMakeMoveServer;
         NetUtility.S_REMATCH -= OnRematchServer;
+        NetUtility.S_ID -= OnIDServer;
+        NetUtility.S_DISCONNECT -= OnDisconnectServer;
 
         NetUtility.C_WELCOME -= OnWelcomeClient;
         NetUtility.C_START_GAME -= OnStartGameClient;
         NetUtility.C_MAKE_MOVE -= OnMakeMoveClient;
         NetUtility.C_REMATCH -= OnRematchClient;
+        NetUtility.C_DISCONNECT -= OnDisconnectClient;
     }
 
 
@@ -74,6 +83,22 @@ public class NetExecute : MonoBehaviour
     {
         Server.Instance.Broadcast(msg);
     }
+    private void OnIDServer(NetMessage msg, NetworkConnection cnn)
+    {
+        NetID ni = msg as NetID;
+        Debug.Log("[SERVER] Receive ID " + ni.PlayerID.ToString());
+        Server.Instance.Broadcast(msg);
+
+        playerID[playerCount] = ni.PlayerID;
+        Debug.Log($"[SERVER] Player ID {playerID[playerCount]} saved as player {playerCount}");
+    }
+
+    private void OnDisconnectServer(NetMessage msg, NetworkConnection cnn)
+    {
+        Debug.Log("[SERVER] Shutting down server");
+        Server.Instance.Broadcast(msg as NetDisconnect);
+        Server.Instance.Shutdown();
+    }
 
 
 
@@ -83,12 +108,13 @@ public class NetExecute : MonoBehaviour
         NetWelcome nw = msg as NetWelcome;
         currentTeam = nw.AssignedTeam;
 
-        Debug.Log($"My assigned team is {nw.AssignedTeam}");
+        Debug.Log($"[CLIENT] My assigned team is {nw.AssignedTeam}");
     }
     private void OnStartGameClient(NetMessage msg)
     {
         // We just need to go to the game scene
         SceneManager.LoadScene(1);
+        gameObject.SetActive(false);
     }
     private void OnMakeMoveClient(NetMessage msg)
     {
@@ -110,6 +136,12 @@ public class NetExecute : MonoBehaviour
         // activate the piece of UI
 
         // if both players want to rematch
+    }
+    private void OnDisconnectClient(NetMessage msg)
+    {
+        Debug.Log("[CLIENT] Shutting down client");
+        Client.Instance.Shutdown();
+        SceneManager.LoadScene(5);
     }
     #endregion
 }
