@@ -13,7 +13,7 @@ public class NetExecute : MonoBehaviour
 
     // multi logic
     private int playerCount = -1;
-    private int currentTeam = -1;
+    public static int currentTeam = -1;
     private bool localGame = true;
     private bool[] playerRematch = new bool[2];
     [HideInInspector] public int[] playerID = new int[2];
@@ -71,9 +71,12 @@ public class NetExecute : MonoBehaviour
     // Server
     private void OnMakeMoveServer(NetMessage msg, NetworkConnection cnn)
     {
+        Debug.Log("[SERVER] Receive make move");
         NetMakeMove mm = msg as NetMakeMove;
-        // Receive, and just broadcast it back
-        Server.Instance.Broadcast(msg);
+        if(Server.Instance.connections[0] == cnn)
+            Server.Instance.SendToClient(Server.Instance.connections[1], mm);
+        else 
+            Server.Instance.SendToClient(Server.Instance.connections[0], mm);
     }
     private void OnWelcomeServer(NetMessage msg, NetworkConnection cnn)
     {
@@ -131,12 +134,9 @@ public class NetExecute : MonoBehaviour
     {
         NetMakeMove mm = msg as NetMakeMove;
 
-        Debug.Log($"MM: {mm.teamId} : {mm.originalX} {mm.originalY} -> {mm.destinationX} {mm.destinationY}");
+        Debug.Log($"MM: {mm.originalX} {mm.originalY} -> {mm.destinationX} {mm.destinationY}");
 
-        if (mm.teamId != currentTeam)
-        {
-            // MoveTo function
-        }
+        GameController.updatePos(mm.originalX, mm.originalY, mm.destinationX, mm.destinationY);
     }
     private void OnRematchClient(NetMessage msg)
     {

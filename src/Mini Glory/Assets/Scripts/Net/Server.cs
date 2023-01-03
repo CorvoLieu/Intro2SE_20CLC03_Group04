@@ -19,7 +19,7 @@ public class Server : MonoBehaviour
 
 
     public NetworkDriver driver;
-    private NativeList<NetworkConnection> connections;
+    public NativeList<NetworkConnection> connections;
 
     private bool isActive = false;
     private const float keepAliveTickRate = 20.0f;

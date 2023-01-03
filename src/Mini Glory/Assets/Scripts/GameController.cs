@@ -56,6 +56,8 @@ public class GameController : MonoBehaviour
     float timer;
     string rivalID;
 
+    public static int[] updateQueue = { -1, -1, -1, -1 };
+
     // Start is called before the first frame update
     void Start()
     {
@@ -83,12 +85,21 @@ public class GameController : MonoBehaviour
         clientCamera.transform.position = new Vector3(-size_row * 0.4625f, 6f, 6f);
 
         DisplayChessBoard();
-        DisplayChessBoardWithGrid(grid);  
+        DisplayChessBoardWithGrid(grid);
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (updateQueue[0] != -1)
+        {
+            MoveTo(updateQueue[0], updateQueue[1], updateQueue[2], updateQueue[3]);
+            updateQueue[0] = -1;
+            updateQueue[1] = -1;
+            updateQueue[2] = -1;
+            updateQueue[3] = -1;
+        }
+
         if (CheckWinGame() == 0)
         {
             //Process screen white win and black lose
@@ -105,7 +116,8 @@ public class GameController : MonoBehaviour
         if (m_ultiCounterWhite >= 3)
         {
             m_ultiButton.gameObject.SetActive(true);
-        }   else
+        }
+        else
         {
             m_ultiButton.gameObject.SetActive(false);
         }
@@ -119,9 +131,9 @@ public class GameController : MonoBehaviour
         if (turn_relifeBlack == 0)
         {
             Relife_Black();
-            turn_relifeBlack = - 1;
+            turn_relifeBlack = -1;
         }
-        
+
         if (!currentCamera)
         {
             currentCamera = Camera.current;
@@ -138,7 +150,7 @@ public class GameController : MonoBehaviour
                     if (version.collider.tag != "Cell")
                     {
                         ChessPiece tmp = version.transform.gameObject.GetComponent<ChessPiece>();
-                        if (tmp.getIsDead() == false && tmp.team == turn && tmp.stunned == 0)
+                        if (tmp.getIsDead() == false && tmp.team == turn && tmp.stunned == 0 && NetExecute.currentTeam == turn)
                         {
                             availableMove = tmp.GetAvailableMoves(ref posChess, size_row, size_col);
                             Debug.Log(availableMove.Count.ToString());
@@ -155,7 +167,7 @@ public class GameController : MonoBehaviour
 
                 //Move chess
                 Vector2Int index = LookupChessPos(version.transform.gameObject);
-                if (Input.GetMouseButtonDown(0) && isValidIndex(index))
+                if (Input.GetMouseButtonDown(0) && isValidIndex(index) && NetExecute.currentTeam == turn)
                 {
                     // Debug.Log("Clicked" + index.x.ToString());
                     // Debug.Log("Clicked" + index.y.ToString());
@@ -198,7 +210,6 @@ public class GameController : MonoBehaviour
                     else
                     {
                         MoveTo(currentDragging, index.x, index.y);
-                        ChangeTurn();
                         availableMove = null;
                         currentDragging = null;
                         blockRoad = false;
@@ -278,7 +289,7 @@ public class GameController : MonoBehaviour
         // return new Vector2Int((int)-hitVer.transform.position.x, (int)hitVer.transform.position.z);
         ChessPiece temp = hitVer.GetComponent<ChessPiece>();
         for (int i = 0; i < size_row; i++)
-            for(int j = 0; j < size_col; j++)
+            for (int j = 0; j < size_col; j++)
             {
                 if (posChess[i, j] == temp)
                     return new Vector2Int(i, j);
@@ -291,7 +302,13 @@ public class GameController : MonoBehaviour
         return new Vector2Int((int)-hitVer.transform.position.x, (int)hitVer.transform.position.z);
     }
 
-    bool MoveTo(ChessPiece cp, int desX, int desY)
+    public bool MoveTo(int prevX, int prevY, int desX, int desY)
+    {
+        Debug.Log($"Call Move: {prevX} {prevY} -> {desX} {desY}");
+        return MoveTo(posChess[prevX, prevY], desX, desY, false);
+    }
+
+    bool MoveTo(ChessPiece cp, int desX, int desY, bool isSending = true)
     {
         Vector2Int previousPos = new Vector2Int(cp.currentX, cp.currentY);
         ChessPiece ocp = posChess[desX, desY];
@@ -329,6 +346,18 @@ public class GameController : MonoBehaviour
             }
         }
 
+        if (isSending)
+        {
+            Debug.Log("[CLIENT] Sending make move");
+            var nmm = new NetMakeMove();
+
+            nmm.originalX = cp.currentX;
+            nmm.originalY = cp.currentY;
+            nmm.destinationX = desX;
+            nmm.destinationY = desY;
+            Client.Instance.SendToServer(nmm);
+        }
+
         //Di chuyển
         cp.currentX = desX;
         cp.currentY = desY;
@@ -336,6 +365,7 @@ public class GameController : MonoBehaviour
 
         posChess[desX, desY] = cp;
         posChess[previousPos.x, previousPos.y] = null;
+        ChangeTurn();
 
         return true;
     }
@@ -360,7 +390,8 @@ public class GameController : MonoBehaviour
                         ChangeTurn();
                         return false;
                     }
-                } else
+                }
+                else
                     return true;
             }
         }
@@ -462,10 +493,10 @@ public class GameController : MonoBehaviour
                     {
                         clone = DisplayChess(Hero_White_Clown, temp.currentX, temp.currentY).GetComponent<ChessPiece>();
                     }
-                    clone.SetScale(new Vector3(0.8f, 0.8f, 0.8f) , true);
+                    clone.SetScale(new Vector3(0.8f, 0.8f, 0.8f), true);
                     clone.SetRotation(Vector3.zero);
                 }
-                
+
             }
             if (temp.team == 1)
             {
@@ -642,7 +673,7 @@ public class GameController : MonoBehaviour
     {
         if (turn == 0)
             turn = 1;
-        else 
+        else
             turn = 0;
 
         if (m_ultiCounterWhite < 3)
@@ -664,7 +695,7 @@ public class GameController : MonoBehaviour
     }
     public static void EnterGame(int team)
     {
-        if(team == 0)
+        if (team == 0)
         {
             SceneManager.LoadScene(2);
             return;
@@ -695,6 +726,13 @@ public class GameController : MonoBehaviour
         if (countBlack <= 2)
             return 0;
         return -1;
+    }
+    public static void updatePos(int prevX, int prevY, int desX, int desY)
+    {
+        updateQueue[0] = prevX;
+        updateQueue[1] = prevY;
+        updateQueue[2] = desX;
+        updateQueue[3] = desY;
     }
 }
 
