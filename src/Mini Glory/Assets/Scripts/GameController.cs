@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
+using UnityEngine.UI;
+using TMPro;
 
 public class GameController : MonoBehaviour
 {
@@ -10,6 +12,9 @@ public class GameController : MonoBehaviour
     float m_default_posY;
     float m_default_posZ;
 
+    public TextMeshProUGUI m_mana;
+    public TextMeshProUGUI m_turnRelife;
+    public Button m_ultiButton;
     public Camera mainCamera;
     public GameObject Bishop_White;
     public GameObject Bishop_Black;
@@ -38,10 +43,14 @@ public class GameController : MonoBehaviour
     Camera currentCamera;
     ChessBoard m_chessboard;
     List<Vector2Int> availableMove;
-    List<ChessPiece> whiteDefeat;
-    List<ChessPiece> blackDefeat;
+    public List<ChessPiece> whiteDefeat;
+    public List<ChessPiece> blackDefeat;
     bool blockRoad;
     int turn;
+    int m_ultiCounterWhite;
+    int m_ultiCounterBlack;
+    int turn_relifeWhite;
+    int turn_relifeBlack;
 
     float timer;
     string rivalID;
@@ -49,15 +58,20 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        m_ultiButton.gameObject.SetActive(false);
+        m_turnRelife.gameObject.SetActive(false);
         timer = 0;
         rivalID = "123456";
-
         m_default_posX = 0;
         m_default_posY = 0.3f;
         m_default_posZ = 0;
         rayLength = 100;
         blockRoad = false;
         turn = 0;
+        m_ultiCounterWhite = 1;
+        m_ultiCounterBlack = 1;
+        turn_relifeWhite = -1;
+        turn_relifeBlack = -1;
         posChess = new ChessPiece[size_row, size_col];
         whiteDefeat = new List<ChessPiece>();
         blackDefeat = new List<ChessPiece>();
@@ -73,6 +87,28 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        m_mana.text = "Mana: " + m_ultiCounterWhite.ToString();
+        m_turnRelife.text = "Turn Relife: " + turn_relifeWhite.ToString();
+        if (m_ultiCounterWhite >= 3)
+        {
+            m_ultiButton.gameObject.SetActive(true);
+        }   else
+        {
+            m_ultiButton.gameObject.SetActive(false);
+        }
+
+        if (turn_relifeWhite == 0)
+        {
+            Relife_White();
+            m_turnRelife.gameObject.SetActive(false);
+            turn_relifeWhite = -1;
+        }
+        if (turn_relifeBlack == 0)
+        {
+            Relife_Black();
+            turn_relifeBlack = - 1;
+        }
+        
         if (!currentCamera)
         {
             currentCamera = Camera.current;
@@ -89,7 +125,7 @@ public class GameController : MonoBehaviour
                     if (version.collider.tag != "Cell")
                     {
                         ChessPiece tmp = version.transform.gameObject.GetComponent<ChessPiece>();
-                        if (tmp.getIsDead() == false && tmp.team == turn)
+                        if (tmp.getIsDead() == false && tmp.team == turn && tmp.stunned == 0)
                         {
                             availableMove = tmp.GetAvailableMoves(ref posChess, size_row, size_col);
                             Debug.Log(availableMove.Count.ToString());
@@ -149,13 +185,11 @@ public class GameController : MonoBehaviour
                     else
                     {
                         MoveTo(currentDragging, index.x, index.y);
-                        if (turn == 0)
-                            turn = 1;
-                        else
-                            turn = 0;
+                        ChangeTurn();
                         availableMove = null;
                         currentDragging = null;
                         blockRoad = false;
+                        stunne_discount();
                     }
                 }
             }
@@ -257,7 +291,11 @@ public class GameController : MonoBehaviour
                 blackDefeat.Add(ocp);
                 ocp.SetPosition(new Vector3(m_default_posX + 1 + (n % 2) * 0.75f, m_default_posY, m_default_posZ + (size_col - 1) - (n / 2) * 0.75f));
                 if (ocp.type == ChessPieceType.Hero)
+                {
                     ocp.SetScale(new Vector3(0.5f, 0.5f, 0.5f));
+                    turn_relifeWhite = 4;
+                    m_turnRelife.gameObject.SetActive(true);
+                }
                 else
                     ocp.SetScale(Vector3.one * 1500f);
                 ocp.setIsDead(true);
@@ -268,7 +306,10 @@ public class GameController : MonoBehaviour
                 whiteDefeat.Add(ocp);
                 ocp.SetPosition(new Vector3(m_default_posX - (size_row) - (n % 2) * 0.75f, m_default_posY, m_default_posZ + (n / 2) * 0.75f));
                 if (ocp.type == ChessPieceType.Hero)
+                {
                     ocp.SetScale(new Vector3(0.5f, 0.5f, 0.5f));
+                    turn_relifeBlack = 4;
+                }
                 else
                     ocp.SetScale(Vector3.one * 1500f);
                 ocp.setIsDead(true);
@@ -294,7 +335,20 @@ public class GameController : MonoBehaviour
         {
             if (destination == moves[i])
             {
-                return true;
+                if (posChess[destination.x, destination.y] == null)
+                    return true;
+                if (posChess[destination.x, destination.y].type == ChessPieceType.Hero)
+                {
+                    if (posChess[destination.x, destination.y].life <= 1)
+                        return true;
+                    else
+                    {
+                        posChess[destination.x, destination.y].life--;
+                        ChangeTurn();
+                        return false;
+                    }
+                } else
+                    return true;
             }
         }
         return false;
@@ -437,6 +491,162 @@ public class GameController : MonoBehaviour
                     clone.SetRotation(new Vector3(0f, 180f, 0f));
                 }
             }
+        }
+    }
+
+    public void Ulti_white()
+    {
+        m_ultiCounterWhite = 0;
+        if (turn == 0)
+        {
+            for (int i = 0; i < size_row; i++)
+            {
+                for (int j = 0; j < size_col; j++)
+                {
+                    if (posChess[i, j] != null)
+                        if (posChess[i, j].type == ChessPieceType.Hero && posChess[i, j].team == 0)
+                        {
+                            posChess[i, j].ulti(ref posChess, size_row, size_col);
+                            turn = 1;
+                            return;
+                        }
+                }
+            }
+        }
+    }
+
+    public void Ulti_black()
+    {
+        m_ultiCounterBlack = 0;
+        if (turn == 0)
+        {
+            for (int i = 0; i < size_row; i++)
+            {
+                for (int j = 0; j < size_col; j++)
+                {
+                    if (posChess[i, j] != null)
+                        if (posChess[i, j].type == ChessPieceType.Hero && posChess[i, j].team == 1)
+                        {
+                            posChess[i, j].ulti(ref posChess, size_row, size_col);
+                            turn = 1;
+                            return;
+                        }
+                }
+            }
+        }
+    }
+
+    void stunne_discount()
+    {
+        for (int i = 0; i < size_row; i++)
+            for (int j = 0; j < size_col; j++)
+            {
+                if (posChess[i, j] != null)
+                    if (posChess[i, j].stunned != 0)
+                    {
+                        posChess[i, j].stunned--;
+                    }
+            }
+    }
+
+    public void White_Defeat(ChessPiece ocp, int x, int y)
+    {
+        int n = blackDefeat.Count;
+        blackDefeat.Add(ocp);
+        ocp.SetPosition(new Vector3(m_default_posX + 1 + (n % 2) * 0.75f, m_default_posY, m_default_posZ + (size_col - 1) - (n / 2) * 0.75f));
+        if (ocp.type == ChessPieceType.Hero)
+            ocp.SetScale(new Vector3(0.5f, 0.5f, 0.5f));
+        else
+            ocp.SetScale(Vector3.one * 1500f);
+        ocp.setIsDead(true);
+        posChess[x, y] = null;
+    }
+
+    public void Black_Defeat(ChessPiece ocp, int x, int y)
+    {
+        int n = whiteDefeat.Count;
+        whiteDefeat.Add(ocp);
+        ocp.SetPosition(new Vector3(m_default_posX - (size_row) - (n % 2) * 0.75f, m_default_posY, m_default_posZ + (n / 2) * 0.75f));
+        if (ocp.type == ChessPieceType.Hero)
+            ocp.SetScale(new Vector3(0.5f, 0.5f, 0.5f));
+        else
+            ocp.SetScale(Vector3.one * 1500f);
+        ocp.setIsDead(true);
+        posChess[x, y] = null;
+    }
+
+    void Relife_White()
+    {
+        foreach (ChessPiece piece in blackDefeat)
+        {
+            if (piece.type == ChessPieceType.Hero)
+            {
+                if (piece != null)
+                {
+                    for (int i = 0; i < size_row; i++)
+                        for (int j = 0; j < size_col; j++)
+                        {
+                            if (posChess[i, j] == null)
+                            {
+                                piece.setIsDead(false);
+                                posChess[i, j] = piece;
+                                piece.SetPosition(new Vector3(m_default_posX - i, m_default_posY, m_default_posZ + j), false);
+                                piece.SetScale(new Vector3(0.8f, 0.8f, 0.8f), false);
+                                return;
+                            }
+                        }
+                }
+            }
+        }
+    }
+
+    void Relife_Black()
+    {
+        foreach (ChessPiece piece in whiteDefeat)
+        {
+            if (piece.type == ChessPieceType.Hero)
+            {
+                if (piece != null)
+                {
+                    for (int i = size_row - 1; i >= 0; i--)
+                        for (int j = size_col - 1; j >= 0; j--)
+                        {
+                            if (posChess[i, j] == null)
+                            {
+                                piece.setIsDead(false);
+                                posChess[i, j] = piece;
+                                piece.SetPosition(new Vector3(m_default_posX - i, m_default_posY, m_default_posZ + j), false);
+                                piece.SetScale(new Vector3(0.8f, 0.8f, 0.8f), false);
+                                return;
+                            }
+                        }
+                }
+            }
+        }
+    }
+
+    void ChangeTurn()
+    {
+        if (turn == 0)
+            turn = 1;
+        else 
+            turn = 0;
+
+        if (m_ultiCounterWhite < 3)
+        {
+            m_ultiCounterWhite++;
+        }
+        if (m_ultiCounterBlack < 3)
+        {
+            m_ultiCounterBlack++;
+        }
+        if (turn_relifeBlack > 0)
+        {
+            turn_relifeBlack--;
+        }
+        if (turn_relifeWhite > 0)
+        {
+            turn_relifeWhite--;
         }
     }
     public static void EnterGame(int team)
