@@ -7,7 +7,6 @@ public class NetMakeMove : NetMessage
     public int originalY;
     public int destinationX;
     public int destinationY;
-    public int teamId;
 
     public NetMakeMove()
     {
@@ -26,7 +25,6 @@ public class NetMakeMove : NetMessage
         writer.WriteInt(originalY);
         writer.WriteInt(destinationX);
         writer.WriteInt(destinationY);
-        writer.WriteInt(teamId);
     }
     public override void Deserialize(DataStreamReader reader)
     {
@@ -34,7 +32,6 @@ public class NetMakeMove : NetMessage
         originalY = reader.ReadInt();
         destinationX = reader.ReadInt();
         destinationY = reader.ReadInt();
-        teamId = reader.ReadInt();
     }
 
 
