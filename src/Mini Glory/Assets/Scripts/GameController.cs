@@ -84,6 +84,11 @@ public class GameController : MonoBehaviour
         mainCamera.transform.position = new Vector3(-size_row * 0.4625f, 6f, -2f);
         clientCamera.transform.position = new Vector3(-size_row * 0.4625f, 6f, 6f);
 
+        if (NetExecute.currentTeam == 0)
+            clientCamera.gameObject.SetActive(false);
+        else
+            mainCamera.gameObject.SetActive(false);
+
         DisplayChessBoard();
         DisplayChessBoardWithGrid(grid);
     }
