@@ -82,7 +82,7 @@ public class GameController : MonoBehaviour
         // SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
         // SceneManager.LoadScene("Customize Game Menu", LoadSceneMode.Additive);
         mainCamera.transform.position = new Vector3(-size_row * 0.4625f, 6f, -2f);
-        clientCamera.transform.position = new Vector3(-size_row * 0.4625f, 6f, 6f);
+        clientCamera.transform.position = new Vector3(-size_row * 0.4625f, 6f, 1f + size_col);
 
         if (NetExecute.currentTeam == 0)
             clientCamera.gameObject.SetActive(false);
