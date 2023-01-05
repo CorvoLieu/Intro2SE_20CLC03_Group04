@@ -26,11 +26,19 @@ public class DataController : MonoBehaviour
 
     
 
-    private static ChessPiece GetXMLLoadPieceAttrib(XmlNode xmlPiece, ChessPiece result)
+    private static ChessPiece GetXMLLoadDetail(XmlNode xmlPiece, ChessPiece result)
     {
         result.team = int.Parse(xmlPiece.Attributes["team"].Value);
         result.currentX = int.Parse(xmlPiece.Attributes["x"].Value);
         result.currentY = int.Parse(xmlPiece.Attributes["y"].Value);
+        switch (xmlPiece.Attributes["type"].Value)
+        {
+            case "Bishop": result.type = ChessPieceType.Bishop; break;
+            case "Rook": result.type = ChessPieceType.Rook; break;
+            case "Knight": result.type = ChessPieceType.Knight; break;
+            case "Pawn": result.type = ChessPieceType.Pawn; break;
+            default: result.type = ChessPieceType.None; Debug.LogError($"Unregcognize type: {xmlPiece.Attributes["type"].Value}"); break;
+        }
         // result.type;
         result.stunned = int.Parse(xmlPiece.Attributes["stunned"].Value);
         result.setIsDead(bool.Parse(xmlPiece.Attributes["isDead"].Value));
@@ -38,9 +46,9 @@ public class DataController : MonoBehaviour
         return result;
     }
 
-    private static void GetXMLLoadPiece(XmlNode xmlPiece, ref SaveFile result)
+    private static ChessPiece GetXMLLoadPiece(XmlNode xmlPiece)
     {
-        ChessPiece piece;
+        ChessPiece piece = null;
         switch (xmlPiece.InnerText)
         {
             case "Knight":
@@ -68,8 +76,8 @@ public class DataController : MonoBehaviour
                     throw new System.Exception("Unrecognize Piece \"" + xmlPiece.InnerText + "\" in save file");
                 }
         }
-        piece = GetXMLLoadPieceAttrib(xmlPiece, piece);
-        result.pieces.Add(piece);
+        piece = GetXMLLoadDetail(xmlPiece, piece);
+        return piece;
     }
     
     private static void GetXMLLoadHero(XmlNode xmlHero, ref SaveFile result)
@@ -101,36 +109,51 @@ public class DataController : MonoBehaviour
         hero.ultiCounter = int.Parse(xmlHero.Attributes["ultiCounter"].Value);
         hero.nextUlti = int.Parse(xmlHero.Attributes["nextUlti"].Value);
         hero.ulti_ed = bool.Parse(xmlHero.Attributes["ulti_ed"].Value);
-        hero = (HeroPiece)GetXMLLoadPieceAttrib(xmlHero, hero);
+        hero = (HeroPiece)GetXMLLoadDetail(xmlHero, hero);
         result.heroes.Add(hero);
     }
 
     public static SaveFile LoadGame(string rivalID)
     {
         SaveFile result = new SaveFile();
-        if (File.Exists(Application.dataPath + "/../Data/" + rivalID + ".txt"))
+        if (File.Exists(Application.dataPath + "/Data/" + rivalID + ".txt"))
         {
             XmlDocument xmlDocument = new XmlDocument();
-            xmlDocument.Load(Application.dataPath + "/../Data/" + rivalID + ".txt");
+            xmlDocument.Load(Application.dataPath + "/Data/" + rivalID + ".txt");
 
             // get save data
             // len
             XmlNode len = xmlDocument.GetElementsByTagName("Len")[0];
-            Debug.Log(len.InnerText);
             result.len = int.Parse(len.InnerText);
             // wid
             XmlNode wid = xmlDocument.GetElementsByTagName("Wid")[0];
             result.wid = int.Parse(wid.InnerText);
-            // timer
-            XmlNode timer = xmlDocument.GetElementsByTagName("Timer")[0];
-            result.timer = float.Parse(timer.InnerText);
+            // turn
+            XmlNode turn = xmlDocument.GetElementsByTagName("turn")[0];
+            result.turn = int.Parse(turn.InnerText);
 
             result.rivalID = rivalID;
 
-            XmlNodeList pieces = xmlDocument.GetElementsByTagName("Piece");
+            // pieceList
+            XmlNode pieceListRoot = xmlDocument.GetElementsByTagName("PieceList")[0];
+            XmlNodeList pieces = pieceListRoot.ChildNodes;
             foreach (XmlNode piece in pieces)
             {
-                GetXMLLoadPiece(piece, ref result);
+                result.pieces.Add(GetXMLLoadPiece(piece));
+            }
+            // whiteDefeat
+            XmlNode wdListRoot = xmlDocument.GetElementsByTagName("deadWhiteList")[0];
+            pieces = wdListRoot.ChildNodes;
+            foreach (XmlNode piece in pieces)
+            {
+                result.whiteDefeat.Add(GetXMLLoadPiece(piece));
+            }
+            // blackDefeat
+            XmlNode bdListRoot = xmlDocument.GetElementsByTagName("deadWhiteList")[0];
+            pieces = bdListRoot.ChildNodes;
+            foreach (XmlNode piece in pieces)
+            {
+                result.blackDefeat.Add(GetXMLLoadPiece(piece));
             }
             XmlNodeList heroes = xmlDocument.GetElementsByTagName("Hero");
             foreach (XmlNode hero in heroes)
@@ -141,7 +164,7 @@ public class DataController : MonoBehaviour
         return result;
     }
 
-    private static void GetXMLSaveData(ChessPiece piece, ref XmlElement root, XmlDocument xmlDocument)
+    private static void GetXMLSaveDetail(ChessPiece piece, ref XmlElement root, XmlDocument xmlDocument)
     {
         root.InnerText = piece.ToString();
         root.SetAttribute("team", piece.team.ToString());
@@ -156,7 +179,7 @@ public class DataController : MonoBehaviour
     {
         XmlElement root = xmlDocument.CreateElement("Piece");
 
-        GetXMLSaveData(piece, ref root, xmlDocument);
+        GetXMLSaveDetail(piece, ref root, xmlDocument);
 
         return root;
     }
@@ -164,7 +187,7 @@ public class DataController : MonoBehaviour
     private static XmlElement GetXMLSaveHero(HeroPiece hero, XmlDocument xmlDocument)
     {
         XmlElement root = xmlDocument.CreateElement("Hero");
-        GetXMLSaveData(hero, ref root, xmlDocument);
+        GetXMLSaveDetail(hero, ref root, xmlDocument);
 
         root.SetAttribute("life", hero.life.ToString());
         root.SetAttribute("nextUlti", hero.nextUlti.ToString());
@@ -191,16 +214,16 @@ public class DataController : MonoBehaviour
         XmlElement wid = xmlDocument.CreateElement("Wid");
         wid.InnerText = saveFile.wid.ToString();
         root.AppendChild(wid);
-        // time
-        XmlElement timer = xmlDocument.CreateElement("Timer");
-        timer.InnerText = saveFile.timer.ToString();
-        root.AppendChild(timer);
         // id
         XmlElement ID = xmlDocument.CreateElement("rivalID");
         ID.InnerText = saveFile.rivalID;
         root.AppendChild(ID);
+        // turn
+        XmlElement turn = xmlDocument.CreateElement("turn");
+        turn.InnerText = saveFile.turn.ToString();
+        root.AppendChild(turn);
 
-        // piece
+        // pieceList
         XmlElement pieceList = xmlDocument.CreateElement("PieceList");
         foreach (var piece in saveFile.pieces)
         {
@@ -208,6 +231,22 @@ public class DataController : MonoBehaviour
             pieceList.AppendChild(xmlPiece);
         }
         root.AppendChild(pieceList);
+        // deadWhiteList
+        XmlElement deadWhiteList = xmlDocument.CreateElement("deadWhiteList");
+        foreach (var piece in saveFile.whiteDefeat)
+        {
+            XmlElement xmlPiece = GetXMLSavePiece(piece, xmlDocument);
+            deadWhiteList.AppendChild(xmlPiece);
+        }
+        root.AppendChild(deadWhiteList);
+        // deadBlackList
+        XmlElement deadBlackList = xmlDocument.CreateElement("deadBlackList");
+        foreach (var piece in saveFile.blackDefeat)
+        {
+            XmlElement xmlPiece = GetXMLSavePiece(piece, xmlDocument);
+            deadBlackList.AppendChild(xmlPiece);
+        }
+        root.AppendChild(deadBlackList);
 
         // hero
         XmlElement heroList = xmlDocument.CreateElement("HeroList");
@@ -219,8 +258,8 @@ public class DataController : MonoBehaviour
         root.AppendChild(heroList);
 
         xmlDocument.AppendChild(root);
-        xmlDocument.Save(Application.dataPath + "/../Data/" + saveFile.rivalID + ".txt");
-        if (File.Exists(Application.dataPath + "/../Data/" + saveFile.rivalID + ".txt"))
+        xmlDocument.Save(Application.dataPath + "/Data/" + saveFile.rivalID + ".txt");
+        if (File.Exists(Application.dataPath + "/Data/" + saveFile.rivalID + ".txt"))
         {
             Debug.Log("File Saved");
         }

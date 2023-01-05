@@ -109,7 +109,6 @@ public class Client : MonoBehaviour
         driver.BeginSend(connection, out writer);
         msg.Serialize(ref writer);
         driver.EndSend(writer);
-        Debug.Log("[CLIENT] Finish write");
     }
 
     // event parsing

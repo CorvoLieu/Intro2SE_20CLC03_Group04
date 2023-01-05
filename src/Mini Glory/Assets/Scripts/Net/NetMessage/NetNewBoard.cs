@@ -1,13 +1,18 @@
 using Unity.Networking.Transport;
+using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class NetNewBoard : NetMessage
 {
+    public int turn { get; set; }
     public int len { get; set; }
     public int wid { get; set; }
     public int hero1Ability { get; set; }
     public int hero2Ability { get; set; }
     public ChessPieceType[,] board;
+    public List<ChessPieceType> whiteDefeat;
+    public List<ChessPieceType> blackDefeat;
 
     public NetNewBoard()
     {
@@ -16,6 +21,8 @@ public class NetNewBoard : NetMessage
     public NetNewBoard(DataStreamReader reader)
     {
         Code = OpCode.NEW_BOARD;
+        whiteDefeat = new List<ChessPieceType>();
+        blackDefeat = new List<ChessPieceType>();
         Deserialize(reader);
     }
 
@@ -32,6 +39,7 @@ public class NetNewBoard : NetMessage
             {
                 writer.WriteByte((byte)board[x, y]);
             }
+        writer.WriteInt(turn);
     }
     public override void Deserialize(DataStreamReader reader)
     {
@@ -45,6 +53,7 @@ public class NetNewBoard : NetMessage
             {
                 board[x, y] = (ChessPieceType)reader.ReadByte();
             }
+        turn = reader.ReadInt();
     }
 
 

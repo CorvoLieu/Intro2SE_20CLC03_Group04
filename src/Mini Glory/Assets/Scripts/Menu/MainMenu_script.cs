@@ -19,9 +19,11 @@ public class MainMenu_script : MonoBehaviour
     {
         net_execute.server.Init(8008);
         net_execute.client.Init("127.0.0.1", 8008);
+        NotifCenter.notif.Enqueue("Create a Room");
     }
     public void JoinRoom()
     {
+        NotifCenter.notif.Enqueue("Join a Room");
         // Only switch scene
         // Done outside
     }
@@ -58,7 +60,10 @@ public class MainMenu_script : MonoBehaviour
     // JOIN GAME
     public void JoinButton()
     {
-        net_execute.client.Init(addressInput.text, 8008);
+        if(addressInput.text != "")
+            net_execute.client.Init(addressInput.text, 8008);
+        else
+            NotifCenter.notif.Enqueue("Input field must not be empty");
     }
     public void LocalGame()
     {

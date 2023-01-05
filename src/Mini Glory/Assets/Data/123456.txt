@@ -1,0 +1,17 @@
+<Save FileName="123456">
+  <Len>7</Len>
+  <Wid>8</Wid>
+  <rivalID>123456</rivalID>
+  <turn>0</turn>
+  <PieceList>
+    <Piece team="0" x="3" y="3" type="Rook" stunned="0" isDead="False">Rook</Piece>
+    <Piece team="1" x="4" y="5" type="Knight" stunned="0" isDead="False">Knight</Piece>
+    <Piece team="1" x="4" y="6" type="Rook" stunned="0" isDead="False">Rook</Piece>
+    <Piece team="0" x="6" y="0" type="Bishop" stunned="0" isDead="False">Bishop</Piece>
+    <Piece team="1" x="6" y="1" type="Bishop" stunned="0" isDead="False">Bishop</Piece>
+    <Piece team="0" x="6" y="2" type="Knight" stunned="0" isDead="False">Knight</Piece>
+  </PieceList>
+  <deadWhiteList />
+  <deadBlackList />
+  <HeroList />
+</Save>

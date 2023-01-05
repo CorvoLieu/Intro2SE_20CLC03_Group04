@@ -12,6 +12,7 @@ public enum OpCode
     DISCONNECT = 6,
     ID = 7,
     NEW_BOARD = 8,
+    CHAT = 9,
 }
 
 public static class NetUtility
@@ -30,6 +31,7 @@ public static class NetUtility
             case OpCode.ID: msg = new NetID(stream); break;
             case OpCode.DISCONNECT: msg = new NetDisconnect(stream); break;
             case OpCode.NEW_BOARD: msg = new NetNewBoard(stream); break;
+            case OpCode.CHAT: msg = new NetChat(stream); break;
             default:
                 Debug.LogError("Message received has no opcode");
                 break;
@@ -51,6 +53,7 @@ public static class NetUtility
     public static Action<NetMessage> C_ID;
     // public static Action<NetMessage> C_DISCONNECT;
     public static Action<NetMessage> C_NEW_BOARD;
+    public static Action<NetMessage> C_CHAT;
     public static Action<NetMessage, NetworkConnection> S_KEEP_ALIVE;
     public static Action<NetMessage, NetworkConnection> S_WELCOME;
     public static Action<NetMessage, NetworkConnection> S_START_GAME;
@@ -59,4 +62,5 @@ public static class NetUtility
     public static Action<NetMessage, NetworkConnection> S_ID;
     // public static Action<NetMessage, NetworkConnection> S_DISCONNECT;
     public static Action<NetMessage, NetworkConnection> S_NEW_BOARD;
+    public static Action<NetMessage, NetworkConnection> S_CHAT;
 }

@@ -19,6 +19,7 @@ public class ChatLog : MonoBehaviour
     public GameObject ChatPanel;
     public GameObject TextObject;
     public InputField chatBox;
+    public static string inComeText = "";
 
     // Start is called before the first frame update
     void Start()
@@ -29,11 +30,19 @@ public class ChatLog : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (inComeText != "")
+        {
+            SendMessageToChat(inComeText);
+            inComeText = "";
+        }
+
         if (chatBox.text != "")
         {
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                SendMessageToChat(chatBox.text);
+                var nc = new NetChat();
+                nc.msg = chatBox.text;
+                Client.Instance.SendToServer(nc);
                 chatBox.text = "";
             }
         }

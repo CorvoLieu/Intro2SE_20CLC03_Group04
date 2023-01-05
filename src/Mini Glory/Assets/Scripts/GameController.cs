@@ -44,16 +44,15 @@ public class GameController : MonoBehaviour
     Camera currentCamera;
     ChessBoard m_chessboard;
     List<Vector2Int> availableMove;
-    public List<ChessPiece> whiteDefeat;
-    public List<ChessPiece> blackDefeat;
+    public static List<ChessPiece> whiteDefeat = new List<ChessPiece>();
+    public static List<ChessPiece> blackDefeat = new List<ChessPiece>();
     bool blockRoad;
     int turn;
-    int m_ultiCounterWhite;
-    int m_ultiCounterBlack;
-    int turn_relifeWhite;
-    int turn_relifeBlack;
+    static int m_ultiCounterWhite = 1;
+    static int m_ultiCounterBlack = 1;
+    static int turn_relifeWhite = -1;
+    static int turn_relifeBlack = -1;
 
-    float timer;
     string rivalID;
 
     public static int[] updateQueue = { -1, -1, -1, -1 };
@@ -63,7 +62,6 @@ public class GameController : MonoBehaviour
     {
         m_ultiButton.gameObject.SetActive(false);
         m_turnRelife.gameObject.SetActive(false);
-        timer = 0;
         rivalID = "123456";
         m_default_posX = 0;
         m_default_posY = 0.3f;
@@ -71,18 +69,10 @@ public class GameController : MonoBehaviour
         rayLength = 100;
         blockRoad = false;
         turn = 0;
-        m_ultiCounterWhite = 1;
-        m_ultiCounterBlack = 1;
-        turn_relifeWhite = -1;
-        turn_relifeBlack = -1;
         posChess = new ChessPiece[size_row, size_col];
-        whiteDefeat = new List<ChessPiece>();
-        blackDefeat = new List<ChessPiece>();
         m_chessboard = FindObjectOfType<ChessBoard>();
-        // SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
-        // SceneManager.LoadScene("Customize Game Menu", LoadSceneMode.Additive);
         mainCamera.transform.position = new Vector3(-size_row * 0.4625f, 6f, -2f);
-        clientCamera.transform.position = new Vector3(-size_row * 0.4625f, 6f, 6f);
+        clientCamera.transform.position = new Vector3(-size_row * 0.4625f, 6f, 2f + size_col);
 
         if (NetExecute.currentTeam == 0)
             clientCamera.gameObject.SetActive(false);
@@ -115,7 +105,7 @@ public class GameController : MonoBehaviour
             //Process screen white lose and black win
             SceneManager.LoadScene("WinGame");
         }
-        
+
         m_mana.text = "Mana: " + m_ultiCounterWhite.ToString();
         m_turnRelife.text = "Turn Relife: " + turn_relifeWhite.ToString();
         if (m_ultiCounterWhite >= 3)
@@ -148,7 +138,10 @@ public class GameController : MonoBehaviour
         Ray ray = currentCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out version, rayLength))
         {
-            if (version.collider.tag == "Cell" || version.collider.tag == "Bishop_White" || version.collider.tag == "Bishop_Black" || version.collider.tag == "Knight_White" || version.collider.tag == "Knight_Black" || version.collider.tag == "Pawn_White" || version.collider.tag == "Pawn_Black" || version.collider.tag == "Rook_White" || version.collider.tag == "Rook_Black" || version.collider.tag == "Hero_White" || version.collider.tag == "Hero_Black")
+            if (version.collider.tag == "Cell" || version.collider.tag == "Bishop_White" || version.collider.tag == "Bishop_Black" ||
+            version.collider.tag == "Knight_White" || version.collider.tag == "Knight_Black" || version.collider.tag == "Pawn_White" ||
+            version.collider.tag == "Pawn_Black" || version.collider.tag == "Rook_White" || version.collider.tag == "Rook_Black" ||
+            version.collider.tag == "Hero_White" || version.collider.tag == "Hero_Black")
             {
                 if (blockRoad == false)
                 {
@@ -415,7 +408,7 @@ public class GameController : MonoBehaviour
     {
         SaveFile saveFile = new SaveFile();
 
-        saveFile.timer = timer;
+        saveFile.turn = turn;
         saveFile.blackDefeat = blackDefeat;
         saveFile.whiteDefeat = whiteDefeat;
 
@@ -426,8 +419,18 @@ public class GameController : MonoBehaviour
 
         foreach (ChessPiece piece in posChess)
         {
-            ChessPiece temp = Instantiate(piece);
-            saveFile.pieces.Add(temp);
+            if (piece != null)
+            {
+                ChessPiece temp = Instantiate(piece);
+                if (piece.type != ChessPieceType.Hero)
+                {
+                    saveFile.pieces.Add(temp);
+                }
+                else
+                {
+                    saveFile.heroes.Add(temp as HeroPiece);
+                }
+            }
         }
 
         return saveFile;
@@ -441,24 +444,36 @@ public class GameController : MonoBehaviour
     public void LoadGame()
     {
         SaveFile saveFile = DataController.LoadGame(rivalID);
+        NetNewBoard nb = new NetNewBoard();
 
-        timer = saveFile.timer;
-        blackDefeat = saveFile.blackDefeat;
-        whiteDefeat = saveFile.whiteDefeat;
+        nb.turn = saveFile.turn;
+        nb.whiteDefeat = new List<ChessPieceType>();
+        foreach (var p in saveFile.whiteDefeat)
+            nb.whiteDefeat.Add(p.type);
+        nb.blackDefeat = new List<ChessPieceType>();
+        foreach (var p in saveFile.blackDefeat)
+            nb.blackDefeat.Add(p.type);
 
-        size_col = saveFile.len;
-        size_row = saveFile.wid;
+        nb.len = saveFile.len;
+        nb.wid = saveFile.wid;
 
-        rivalID = saveFile.rivalID;
-
-        posChess = new ChessPiece[size_col, size_row];
+        nb.board = new ChessPieceType[nb.wid, nb.len];
+        for (int i = 0; i < nb.wid; i++)
+        {
+            for (int j = 0; j < nb.len; j++)
+            {
+                nb.board[i, j] = ChessPieceType.None;
+            }
+        }
 
         foreach (ChessPiece piece in saveFile.pieces)
         {
-            posChess[piece.currentX, piece.currentY] = Instantiate(piece);
+            Debug.Log($"{piece.type} at {piece.currentX} : {piece.currentY}");
+            nb.board[piece.currentX, piece.currentY] = piece.type;
         }
 
-        // Re-load the game
+        Client.Instance.SendToServer(nb);
+        SceneManager.LoadScene(8);
     }
 
     public void DisplayChessBoardWithGrid(List<ChessPiece> grid)

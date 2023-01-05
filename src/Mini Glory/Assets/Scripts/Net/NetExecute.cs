@@ -36,6 +36,7 @@ public class NetExecute : MonoBehaviour
         NetUtility.S_ID += OnIDServer;
         // NetUtility.S_DISCONNECT += OnDisconnectServer;
         NetUtility.S_NEW_BOARD += OnNewBoardServer;
+        NetUtility.S_CHAT += OnChatServer;
 
         NetUtility.C_WELCOME += OnWelcomeClient;
         NetUtility.C_START_GAME += OnStartGameClient;
@@ -43,9 +44,8 @@ public class NetExecute : MonoBehaviour
         NetUtility.C_REMATCH += OnRematchClient;
         // NetUtility.C_DISCONNECT += OnDisconnectClient;
         NetUtility.C_NEW_BOARD += OnNewBoardClient;
+        NetUtility.C_CHAT += OnChatClient;
     }
-
-
 
     private void UnRegisterEvents()
     {
@@ -55,6 +55,7 @@ public class NetExecute : MonoBehaviour
         NetUtility.S_ID -= OnIDServer;
         // NetUtility.S_DISCONNECT -= OnDisconnectServer;
         NetUtility.S_NEW_BOARD -= OnNewBoardServer;
+        NetUtility.S_CHAT -= OnChatServer;
 
         NetUtility.C_WELCOME -= OnWelcomeClient;
         NetUtility.C_START_GAME -= OnStartGameClient;
@@ -62,6 +63,7 @@ public class NetExecute : MonoBehaviour
         NetUtility.C_REMATCH -= OnRematchClient;
         // NetUtility.C_DISCONNECT -= OnDisconnectClient;
         NetUtility.C_NEW_BOARD -= OnNewBoardClient;
+        NetUtility.C_CHAT -= OnChatClient;
     }
 
 
@@ -71,11 +73,11 @@ public class NetExecute : MonoBehaviour
     // Server
     private void OnMakeMoveServer(NetMessage msg, NetworkConnection cnn)
     {
-        Debug.Log("[SERVER] Receive make move");
+        // Debug.Log("[SERVER] Receive make move");
         NetMakeMove mm = msg as NetMakeMove;
-        if(Server.Instance.connections[0] == cnn)
+        if (Server.Instance.connections[0] == cnn)
             Server.Instance.SendToClient(Server.Instance.connections[1], mm);
-        else 
+        else
             Server.Instance.SendToClient(Server.Instance.connections[0], mm);
     }
     private void OnWelcomeServer(NetMessage msg, NetworkConnection cnn)
@@ -95,11 +97,11 @@ public class NetExecute : MonoBehaviour
     private void OnIDServer(NetMessage msg, NetworkConnection cnn)
     {
         NetID ni = msg as NetID;
-        Debug.Log("[SERVER] Receive ID " + ni.PlayerID.ToString());
+        // Debug.Log("[SERVER] Receive ID " + ni.PlayerID.ToString());
         Server.Instance.Broadcast(msg);
 
         playerID[playerCount] = ni.PlayerID;
-        Debug.Log($"[SERVER] Player ID {playerID[playerCount]} saved as player {playerCount}");
+        // Debug.Log($"[SERVER] Player ID {playerID[playerCount]} saved as player {playerCount}");
     }
     private void OnDisconnectServer(NetMessage msg, NetworkConnection cnn)
     {
@@ -110,10 +112,19 @@ public class NetExecute : MonoBehaviour
 
     private void OnNewBoardServer(NetMessage msg, NetworkConnection cnn)
     {
-        Debug.Log("[SERVER] Broadcasting new board command");
+        // Debug.Log("[SERVER] Broadcasting new board command");
         var nn = msg as NetNewBoard;
         Server.Instance.Broadcast(nn);
     }
+    private void OnChatServer(NetMessage msg, NetworkConnection cnn)
+    {
+        NetChat nc = msg as NetChat;
+        // Debug.Log($"[SERVER] Receive chat msg: {nc.msg}");
+        Server.Instance.Broadcast(nc);
+    }
+
+
+
 
 
     // Client
@@ -130,14 +141,6 @@ public class NetExecute : MonoBehaviour
         // gameObject.SetActive(false);
         GameController.EnterGame(currentTeam);
     }
-    private void OnMakeMoveClient(NetMessage msg)
-    {
-        NetMakeMove mm = msg as NetMakeMove;
-
-        Debug.Log($"MM: {mm.originalX} {mm.originalY} -> {mm.destinationX} {mm.destinationY}");
-
-        GameController.updatePos(mm.originalX, mm.originalY, mm.destinationX, mm.destinationY);
-    }
     private void OnRematchClient(NetMessage msg)
     {
         NetRematch rm = msg as NetRematch;
@@ -147,6 +150,14 @@ public class NetExecute : MonoBehaviour
         // activate the piece of UI
 
         // if both players want to rematch
+    }
+    private void OnMakeMoveClient(NetMessage msg)
+    {
+        NetMakeMove mm = msg as NetMakeMove;
+
+        // Debug.Log($"MM: {mm.originalX} {mm.originalY} -> {mm.destinationX} {mm.destinationY}");
+
+        GameController.updatePos(mm.originalX, mm.originalY, mm.destinationX, mm.destinationY);
     }
     private void OnDisconnectClient(NetMessage msg)
     {
@@ -182,7 +193,13 @@ public class NetExecute : MonoBehaviour
             }
         }
 
+        NotifCenter.notif.Enqueue("Player found");
         SceneManager.LoadScene(3);
+    }
+    private void OnChatClient(NetMessage msg)
+    {
+        var nc = msg as NetChat;
+        ChatLog.inComeText = nc.msg;
     }
     #endregion
 }

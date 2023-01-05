@@ -11,6 +11,6 @@ public class SaveFile
     public List<ChessPiece> whiteDefeat = new List<ChessPiece>();
     public List<ChessPiece> pieces = new List<ChessPiece>();
     public List<HeroPiece> heroes = new List<HeroPiece>();
-    public float timer;
     public string rivalID;
+    public int turn;
 }
